@@ -148,4 +148,252 @@
             {"en": "selfish", "pl": "samolubny"},
             {"en": "shy", "pl": "nieśmiały"},
             {"en": "talkative", "pl": "rozmowny"},
-            {"en": "tidy",
+            {"en": "tidy", "pl": "schludny"},
+            {"en": "untidy", "pl": "nieporządny"},
+            {"en": "get annoyed", "pl": "irytować się"},
+            {"en": "insult", "pl": "obrażać (kogoś)"},
+            {"en": "positive", "pl": "pozytywny"},
+            {"en": "wonderful", "pl": "wspaniały"},
+            {"en": "How are things?", "pl": "Co słychać?"},
+            {"en": "How's life?", "pl": "Jak się masz?"},
+            {"en": "I don't believe it!", "pl": "Nie wierzę!"},
+            {"en": "learn (how to do sth)", "pl": "uczyć się (jak coś zrobić)"},
+            {"en": "Easter", "pl": "Wielkanoc"},
+            {"en": "New Year's Day", "pl": "Nowy Rok"},
+            {"en": "season", "pl": "pora roku"}
+        ];
+
+        // Synteza mowy (lektorka)
+        function speakEnglish(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // zatrzymaj poprzednie
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9; // delikatnie wolniej dla wyrazistości
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Efekty dźwiękowe (Web Audio API)
+        function playCorrectSound() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const notes = [880, 1108.73, 1318.51];
+            const now = audioCtx.currentTime;
+
+            notes.forEach((freq, index) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now + index * 0.06);
+
+                gain.gain.setValueAtTime(0, now + index * 0.06);
+                gain.gain.linearRampToValueAtTime(0.3, now + index * 0.06 + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.06 + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now + index * 0.06);
+                osc.stop(now + index * 0.06 + 0.4);
+            });
+        }
+
+        function playFanfare() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const sequence = [
+                { freq: 587.33, start: 0.00, duration: 0.10 },
+                { freq: 739.99, start: 0.10, duration: 0.10 },
+                { freq: 880.00, start: 0.20, duration: 0.10 },
+                { freq: 1174.66, start: 0.32, duration: 0.60 }
+            ];
+            const now = audioCtx.currentTime;
+
+            sequence.forEach(note => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(note.freq, now + note.start);
+
+                gain.gain.setValueAtTime(0, now + note.start);
+                gain.gain.linearRampToValueAtTime(0.3, now + note.start + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + note.start + note.duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now + note.start);
+                osc.stop(now + note.start + note.duration);
+            });
+        }
+
+        // Algorytm Levenshteina
+        function getSimilarityRatio(str1, str2) {
+            const s1 = str1.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const s2 = str2.toLowerCase().replace(/[^a-z0-9]/g, '');
+            
+            if (s1 === s2) return 1.0;
+            if (s1.length === 0 || s2.length === 0) return 0.0;
+
+            const matrix = Array.from({ length: s2.length + 1 }, (_, i) => [i]);
+            for (let j = 0; j <= s1.length; j++) matrix[0][j] = j;
+
+            for (let i = 1; i <= s2.length; i++) {
+                for (let j = 1; j <= s1.length; j++) {
+                    const cost = s2[i - 1] === s1[j - 1] ? 0 : 1;
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j - 1] + cost
+                    );
+                }
+            }
+
+            const distance = matrix[s2.length][s1.length];
+            const maxLength = Math.max(s1.length, s2.length);
+            return (maxLength - distance) / maxLength;
+        }
+
+        // Zmienne stanu aplikacji
+        let currentPool = [];
+        let currentIndex = 0;
+        let correctCount = 0;
+        let isFirstAttempt = true;
+        let isRetryMode = false;
+
+        // Elementy DOM
+        const quizCard = document.getElementById('quiz-card');
+        const scoreCard = document.getElementById('score-card');
+        const progressElem = document.getElementById('progress');
+        const promptElem = document.getElementById('prompt-text');
+        const hintElem = document.getElementById('hint-text');
+        const micBtn = document.getElementById('mic-btn');
+        const resultElem = document.getElementById('result-text');
+        const scorePercentElem = document.getElementById('score-percent');
+        const scoreDetailsElem = document.getElementById('score-details');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Speech Recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                resultElem.className = "result listening";
+                resultElem.innerText = "Słucham...";
+                micBtn.disabled = true;
+            };
+
+            recognition.onresult = (event) => {
+                const spokenText = event.results[0][0].transcript;
+                evaluateAnswer(spokenText);
+            };
+
+            recognition.onerror = (event) => {
+                resultElem.className = "result incorrect";
+                resultElem.innerText = "Nie usłyszano odpowiedzi. Spróbuj ponownie.";
+                micBtn.disabled = false;
+            };
+
+            recognition.onend = () => {
+                micBtn.disabled = false;
+            };
+        } else {
+            alert("Twoja przeglądarka nie obsługuje rozpoznawania mowy.");
+        }
+
+        function startNewSession() {
+            const shuffled = [...flashcardsData].sort(() => 0.5 - Math.random());
+            currentPool = shuffled.slice(0, 10);
+            currentIndex = 0;
+            correctCount = 0;
+
+            quizCard.classList.remove('hidden');
+            scoreCard.classList.add('hidden');
+            renderCard();
+        }
+
+        function renderCard() {
+            const currentCard = currentPool[currentIndex];
+            isFirstAttempt = true;
+            isRetryMode = false;
+
+            progressElem.innerText = `Fiszka ${currentIndex + 1} z 10`;
+            promptElem.innerText = currentCard.pl;
+            hintElem.innerText = "Powiedz odpowiedź w języku angielskim";
+            resultElem.innerText = "";
+            resultElem.className = "result";
+            
+            micBtn.innerText = "🎤 Odpowiedz (Mów)";
+            micBtn.className = "";
+            micBtn.disabled = false;
+        }
+
+        function evaluateAnswer(spokenText) {
+            const currentCard = currentPool[currentIndex];
+            const ratio = getSimilarityRatio(spokenText, currentCard.en);
+
+            if (ratio >= 0.70) {
+                // Odpowiedź poprawna
+                if (isFirstAttempt) {
+                    correctCount++;
+                }
+                
+                playCorrectSound();
+                resultElem.className = "result correct";
+                resultElem.innerText = `Świetnie! Powiedziano: "${spokenText}"`;
+                micBtn.disabled = true;
+
+                // Przejście do kolejnej fiszki po 2 sekundach
+                setTimeout(() => {
+                    currentIndex++;
+                    if (currentIndex < 10) {
+                        renderCard();
+                    } else {
+                        finishSession();
+                    }
+                }, 2000);
+
+            } else {
+                // Odpowiedź błędna
+                isFirstAttempt = false;
+                isRetryMode = true;
+
+                resultElem.className = "result incorrect";
+                resultElem.innerText = `Usłyszano: "${spokenText}". Posłuchaj poprawnej wymowy...`;
+
+                // Odtworzenie poprawnej odpowiedzi
+                speakEnglish(currentCard.en);
+
+                setTimeout(() => {
+                    resultElem.innerText = `Poprawna odpowiedź: "${currentCard.en}". Powtórz teraz!`;
+                    hintElem.innerText = `Posłuchaj i powtórz: "${currentCard.en}"`;
+                    micBtn.innerText = "🎤 Spróbuj powtórzyć";
+                    micBtn.className = "retry-mode";
+                    micBtn.disabled = false;
+                }, 1500);
+            }
+        }
+
+        function finishSession() {
+            quizCard.classList.add('hidden');
+            scoreCard.classList.remove('hidden');
+
+            const percentage = Math.round((correctCount / 10) * 100);
+            scorePercentElem.innerText = `${percentage}%`;
+            scoreDetailsElem.innerText = `Poprawne odpowiedzi za pierwszym razem: ${correctCount} / 10`;
+
+            playFanfare();
+        }
+
+        micBtn.addEventListener('click', () => {
+            if (recognition) recognition.start();
+        });
+
+        restartBtn.addEventListener('click', startNewSession);
+
+        startNewSession();
+    </script>
+</body>
+</html>
