@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiszki - Nauka Słówek</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #f4f4f9; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 20px auto; max-width: 400px; }
+        button { padding: 12px 24px; font-size: 16px; border: none; background: #007bff; color: white; border-radius: 8px; cursor: pointer; }
+        .result { margin-top: 15px; font-weight: bold; }
+    </style>
+    
+    <!-- Konfiguracja PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Fiszki">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+</head>
+<body>
+
+    <h2>Aplikacja Fiszki</h2>
+
+    <div class="card">
+        <p>Przetłumacz na angielski:</p>
+        <h1 id="word">Jabłko</h1>
+        <button id="micBtn">🎤 Mów teraz</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const targetWord = "apple"; // Oczekiwane słówko
+        const wordElem = document.getElementById('word');
+        const micBtn = document.getElementById('micBtn');
+        const resultElem = document.getElementById('result');
+
+        // Sprawdzenie obsługi rozpoznawania mowy
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+            alert("Twoja przeglądarka nie obsługuje rozpoznawania mowy.");
+        } else {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US'; // Ustawiamy język angielski do słuchania
+            recognition.interimResults = false;
+
+            micBtn.addEventListener('click', () => {
+                resultElem.innerText = "Słucham...";
+                recognition.start();
+            });
+
+            recognition.onresult = (event) => {
+                const spokenWord = event.results[0][0].transcript.toLowerCase().trim();
+                
+                if (spokenWord === targetWord) {
+                    resultElem.innerHTML = `<span style="color:green">Świetnie! Powiedziano: "${spokenWord}"</span>`;
+                } else {
+                    resultElem.innerHTML = `<span style="color:red">Blisko! Usłyszano: "${spokenWord}", miało być: "${targetWord}"</span>`;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                resultElem.innerText = "Błąd rozpoznawania: " + event.error;
+            };
+        }
+    </script>
+</body>
+</html>:w
