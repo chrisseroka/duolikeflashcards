@@ -23,7 +23,7 @@
 
         .container {
             width: 100%;
-            max-width: 420px;
+            max-width: 460px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -96,7 +96,50 @@
             margin-top: 4px;
         }
 
-        /* Górny pasek z postępem */
+        /* Ekran wyboru trybu */
+        .mode-options {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .mode-btn {
+            background-color: #ffffff;
+            border: 2.5px solid #e5e5e5;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 0 #e5e5e5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-align: left;
+            transition: all 0.1s ease;
+        }
+
+        .mode-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #e5e5e5;
+        }
+
+        .mode-icon { font-size: 36px; }
+
+        .mode-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #3c3c3c;
+        }
+
+        .mode-desc {
+            font-size: 13px;
+            font-weight: 600;
+            color: #afafaf;
+            margin-top: 2px;
+        }
+
+        /* Pasek górny */
         .top-bar {
             width: 100%;
             display: flex;
@@ -155,21 +198,87 @@
             font-size: 12px;
         }
 
-        /* Nagłówek zadania */
         .header-title {
             align-self: flex-start;
             font-size: 24px;
             font-weight: 800;
             color: #3c3c3c;
-            margin: 10px 0 25px 0;
+            margin: 10px 0 20px 0;
         }
 
-        /* Stos fiszek */
+        /* TRYB NAUKI: Dwukolumnowa lista słówek */
+        .words-grid {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .word-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .word-card {
+            background: #ffffff;
+            border: 2.5px solid #e5e5e5;
+            border-radius: 16px;
+            padding: 14px 12px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: #3c3c3c;
+            box-shadow: 0 3px 0 #e5e5e5;
+            user-select: none;
+        }
+
+        .word-card.pl-card {
+            background-color: #f7f7f7;
+            color: #4b4b4b;
+        }
+
+        .word-card.en-card-hidden {
+            background-color: #1cb0f6;
+            color: #ffffff;
+            border-color: #1899d6;
+            box-shadow: 0 4px 0 #1899d6;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.15s ease;
+        }
+
+        .word-card.en-card-hidden:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1899d6;
+        }
+
+        .word-card.en-card-revealed {
+            background-color: #e5f8d0;
+            border-color: #58cc02;
+            color: #2b7200;
+            box-shadow: 0 3px 0 #58cc02;
+            cursor: pointer;
+            animation: flipIn 0.3s ease;
+        }
+
+        @keyframes flipIn {
+            0% { transform: scaleX(0.5); opacity: 0.5; }
+            100% { transform: scaleX(1); opacity: 1; }
+        }
+
+        /* TRYB PRAKTYKI: Stos fiszek */
         .card-stack {
             position: relative;
             width: 100%;
             max-width: 320px;
-            height: 320px;
+            height: 300px;
             margin: 20px 0;
             display: flex;
             justify-content: center;
@@ -205,7 +314,7 @@
         }
 
         .prompt {
-            font-size: 30px;
+            font-size: 28px;
             font-weight: 800;
             color: #3c3c3c;
             text-align: center;
@@ -219,7 +328,6 @@
             font-weight: 700;
         }
 
-        /* Przyciski */
         .action-area {
             width: 100%;
             display: flex;
@@ -311,7 +419,7 @@
         .feedback-message.incorrect { color: #ff4b4b; }
         .feedback-message.listening { color: #ff9600; }
 
-        /* Widok końca */
+        /* Widok podsumowania */
         .score-card {
             text-align: center;
             display: flex;
@@ -354,16 +462,60 @@
         <div class="sections-list" id="sections-list"></div>
     </div>
 
-    <!-- 2. Ekran rozwiązywania fiszek -->
-    <div class="container hidden" id="quiz-view">
+    <!-- 2. Ekran wyboru trybu -->
+    <div class="container hidden" id="mode-select-view">
         <div class="top-bar">
-            <button class="close-btn" id="exit-btn" title="Wyjdź do lekcji">✕</button>
+            <button class="close-btn" onclick="renderSectionsScreen()">✕</button>
+        </div>
+        <div class="sections-header" id="mode-lesson-title">LESSON 8.4</div>
+        <div class="sections-subtitle" id="mode-lesson-desc">Making arrangements</div>
+
+        <div class="mode-options">
+            <div class="mode-btn" id="start-learn-btn">
+                <div class="mode-icon">📖</div>
+                <div>
+                    <div class="mode-title">Tryb Nauki</div>
+                    <div class="mode-desc">Odkrywaj słówka i słuchaj ich wymowy</div>
+                </div>
+            </div>
+
+            <div class="mode-btn" id="start-practice-btn">
+                <div class="mode-icon">🎤</div>
+                <div>
+                    <div class="mode-title">Tryb Praktyki</div>
+                    <div class="mode-desc">Mów do mikrofonu i sprawdzaj wymowę</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Ekran TRYBU NAUKI -->
+    <div class="container hidden" id="learn-view">
+        <div class="top-bar">
+            <button class="close-btn" onclick="openModeSelect(activeSectionIndex)">✕</button>
             <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
+                <div class="progress-bar" id="learn-progress-bar"></div>
             </div>
             <div class="score-counter">
                 <div class="score-icon">✓</div>
-                <span id="score-count">0</span>
+                <span id="learn-score-count">0</span>
+            </div>
+        </div>
+
+        <div class="header-title">Kliknij kartę, aby odsłonić</div>
+        <div class="words-grid" id="words-grid"></div>
+    </div>
+
+    <!-- 4. Ekran TRYBU PRAKTYKI -->
+    <div class="container hidden" id="quiz-view">
+        <div class="top-bar">
+            <button class="close-btn" onclick="openModeSelect(activeSectionIndex)">✕</button>
+            <div class="progress-container">
+                <div class="progress-bar" id="quiz-progress-bar"></div>
+            </div>
+            <div class="score-counter">
+                <div class="score-icon">✓</div>
+                <span id="quiz-score-count">0</span>
             </div>
         </div>
 
@@ -397,87 +549,2448 @@
         </div>
     </div>
 
-    <!-- 3. Ekran podsumowania -->
+    <!-- 5. Ekran podsumowania -->
     <div class="container hidden" id="score-view">
         <div class="score-card">
-            <h1 style="font-size: 32px; font-weight: 800; color: #3c3c3c;">Lekcja ukończona!</h1>
-            <p style="color: #777; font-weight: 700;">Twój wynik poprawności:</p>
-            <div class="score-percent" id="score-percent">0%</div>
+            <h1 style="font-size: 32px; font-weight: 800; color: #3c3c3c;">Gratulacje!</h1>
+            <p style="color: #777; font-weight: 700;" id="score-subtitle">Lekcja ukończona</p>
+            <div class="score-percent" id="score-percent">100%</div>
             <p id="score-details" style="color: #777; font-weight: 700; margin-bottom: 40px;"></p>
-            <button class="restart-btn" id="restart-btn">Wybierz inną lekcję</button>
+            <button class="restart-btn" id="restart-btn">Wróć do wyboru lekcji</button>
         </div>
     </div>
 
     <script>
-        // Dane słówek podzielone na sekcje/lekcje
         const sectionsData = [
             {
-                "sectionLabel": "LESSON 8.4",
-                "sectionDescription": "Making arrangements / Umawianie się",
-                "words": [
-                    {"en": "Are you busy next Thursday?", "pl": "Czy jesteś zajęty w następny czwartek?"},
-                    {"en": "I've got tickets for a basketball match.", "pl": "Mam bilety na mecz koszykówki."},
-                    {"en": "Catch you later!", "pl": "Do zobaczenia później!"},
-                    {"en": "I don't get it.", "pl": "Nie rozumiem."},
-                    {"en": "See you!", "pl": "Do zobaczenia!"},
-                    {"en": "go out with friends", "pl": "wychodzić z przyjaciółmi"},
-                    {"en": "go to a party", "pl": "iść na przyjęcie"},
-                    {"en": "go to a wedding", "pl": "iść na wesele"}
-                ]
-            },
-            {
-                "sectionLabel": "LESSON 8.5",
-                "sectionDescription": "Daily routines & Life",
-                "words": [
-                    {"en": "aged 7-11", "pl": "w wieku 7-11 lat"},
-                    {"en": "at midnight", "pl": "o północy"},
-                    {"en": "explore", "pl": "eksplorować, odkrywać"},
-                    {"en": "get ready for", "pl": "przygotować się do"},
-                    {"en": "breakfast time", "pl": "czas na śniadanie"},
-                    {"en": "brush your hair", "pl": "czesać włosy"},
-                    {"en": "school uniform", "pl": "mundurek szkolny"}
-                ]
-            },
-            {
-                "sectionLabel": "LESSON 8.6",
-                "sectionDescription": "Feelings & Personality",
-                "words": [
-                    {"en": "annoyed", "pl": "zdenerwowany, poirytowany"},
-                    {"en": "annoying", "pl": "denerwujący, irytujący"},
-                    {"en": "bored", "pl": "znudzony"},
-                    {"en": "boring", "pl": "nudny"},
-                    {"en": "embarrassed", "pl": "zawstydzony, zakłopotany"},
-                    {"en": "excited", "pl": "podekscytowany"},
-                    {"en": "frightened", "pl": "przerażony"},
-                    {"en": "interested", "pl": "zainteresowany"},
-                    {"en": "relaxed", "pl": "zrelaksowany"},
-                    {"en": "tired", "pl": "zmęczony"},
-                    {"en": "worried", "pl": "zmartwiony"},
-                    {"en": "big-headed", "pl": "zarozumiały"},
-                    {"en": "bossy", "pl": "despotyczny"},
-                    {"en": "cheerful", "pl": "radosny"},
-                    {"en": "friendly", "pl": "przyjazny"},
-                    {"en": "hard-working", "pl": "pracowity"},
-                    {"en": "helpful", "pl": "pomocny"},
-                    {"en": "lazy", "pl": "leniwca"},
-                    {"en": "polite", "pl": "uprzejmy"},
-                    {"en": "selfish", "pl": "samolubny"}
-                ]
-            }
+    "sectionLabel": "KL. 5 - LESSON 1.1",
+    "sectionDescription": "School subjects / Przedmioty szkolne",
+    "words": [
+      {"en": "Art", "pl": "sztuka"},
+      {"en": "Computer Studies", "pl": "zajęcia komputerowe, informatyka"},
+      {"en": "English", "pl": "język angielski"},
+      {"en": "French", "pl": "język francuski"},
+      {"en": "Geography", "pl": "geografia"},
+      {"en": "History", "pl": "historia"},
+      {"en": "Maths", "pl": "matematyka"},
+      {"en": "Music", "pl": "muzyka"},
+      {"en": "P.E.", "pl": "W-F"},
+      {"en": "Science", "pl": "przedmioty ścisłe, przyroda"},
+      {"en": "School items", "pl": "Przybory szkolne"},
+      {"en": "calculator", "pl": "kalkulator"},
+      {"en": "dictionary", "pl": "słownik"},
+      {"en": "laptop", "pl": "laptop"},
+      {"en": "map", "pl": "mapa"},
+      {"en": "paints", "pl": "farby"},
+      {"en": "pencil case", "pl": "piórnik"},
+      {"en": "rubber", "pl": "gumka"},
+      {"en": "ruler", "pl": "linijka"},
+      {"en": "scissors", "pl": "nożyczki"},
+      {"en": "trainers", "pl": "trampki"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 1.2",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Hurry up!", "pl": "Pospiesz się!"},
+      {"en": "We're late!", "pl": "Jesteśmy spóźnieni!"},
+      {"en": "What a mess!", "pl": "Ale bałagan!"},
+      {"en": "at home", "pl": "w domu"},
+      {"en": "at school", "pl": "w szkole"},
+      {"en": "at the same time", "pl": "jednocześnie"},
+      {"en": "boring", "pl": "nudny"},
+      {"en": "bring", "pl": "przynieść"},
+      {"en": "daily routine", "pl": "codzienne zajęcia"},
+      {"en": "dinner", "pl": "kolacja"},
+      {"en": "get up", "pl": "wstawać"},
+      {"en": "have breakfast", "pl": "jeść śniadanie"},
+      {"en": "in class", "pl": "w klasie, podczas lekcji"},
+      {"en": "late for class", "pl": "spóźnić się na lekcje"},
+      {"en": "listen to music", "pl": "słuchać muzyki"},
+      {"en": "noisy", "pl": "hałaśliwy"},
+      {"en": "on TV", "pl": "w telewizji"},
+      {"en": "play sports", "pl": "uprawiać sporty"},
+      {"en": "study", "pl": "uczyć się"},
+      {"en": "tonight", "pl": "dziś wieczorem"},
+      {"en": "walk to school", "pl": "iść do szkoły pieszo"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 1.3",
+    "sectionDescription": "Phrases with do and play / Wyrażenia z czasownikami do i play",
+    "words": [
+      {"en": "do ballet", "pl": "tańczyć w balecie"},
+      {"en": "do judo", "pl": "uprawiać dżudo"},
+      {"en": "do karate", "pl": "uprawiać karate"},
+      {"en": "do pottery", "pl": "zajmować się garncarstwem"},
+      {"en": "play basketball", "pl": "grać w koszykówkę"},
+      {"en": "play chess", "pl": "grać w szachy"},
+      {"en": "play football", "pl": "grać w piłkę nożną"},
+      {"en": "play tennis", "pl": "grać w tenisa"},
+      {"en": "play the drums", "pl": "grać na perkusji"},
+      {"en": "play the guitar", "pl": "grać na gitarze"},
+      {"en": "play the piano", "pl": "grać na pianinie"},
+      {"en": "band", "pl": "zespół"},
+      {"en": "bored", "pl": "znudzony"},
+      {"en": "play in a band", "pl": "grać w zespole"},
+      {"en": "rest", "pl": "odpoczywać"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 1.4",
+    "sectionDescription": "Asking for personal information / Pytanie o podstawowe informacje",
+    "words": [
+      {"en": "How do you spell that?", "pl": "Czy mógłbyś to przeliterować?"},
+      {"en": "What's your email address?", "pl": "Jaki jest twój e-mail?"},
+      {"en": "What's your name?", "pl": "Jak masz na imię?"},
+      {"en": "What's your phone number?", "pl": "Jaki jest twój numer telefonu?"},
+      {"en": "Where do you live?", "pl": "Gdzie mieszkasz?"},
+      {"en": "Can I help you?", "pl": "Czy mógłbym ci pomóc?"},
+      {"en": "join a club", "pl": "zapisać się do klubu"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 1.5",
+    "sectionDescription": "Places in a school / Miejsca w szkole",
+    "words": [
+      {"en": "canteen", "pl": "stołówka"},
+      {"en": "classroom", "pl": "klasa"},
+      {"en": "computer room", "pl": "pracownia komputerowa"},
+      {"en": "gym", "pl": "sala gimnastyczna"},
+      {"en": "hall", "pl": "korytarz"},
+      {"en": "library", "pl": "biblioteka"},
+      {"en": "playground", "pl": "plac zabaw, boisko"},
+      {"en": "staff room", "pl": "pokój nauczycielski"},
+      {"en": "assembly", "pl": "apel szkolny"},
+      {"en": "bell", "pl": "dzwonek"},
+      {"en": "crazy", "pl": "szalony"},
+      {"en": "describe", "pl": "opisać"},
+      {"en": "exciting", "pl": "ekscytujący"},
+      {"en": "finish", "pl": "skończyć"},
+      {"en": "magic", "pl": "magia"},
+      {"en": "miss your parents", "pl": "tęsknić za rodzicami"},
+      {"en": "monster", "pl": "potwór"},
+      {"en": "typical", "pl": "typowy"},
+      {"en": "wake up", "pl": "obudzić się"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 1.6",
+    "sectionDescription": "Time expressions / Określenia czasu",
+    "words": [
+      {"en": "at 9 o'clock", "pl": "o dziewiątej"},
+      {"en": "at the weekend", "pl": "w weekend"},
+      {"en": "at lunchtime", "pl": "w czasie lunchu"},
+      {"en": "in the morning", "pl": "rano"},
+      {"en": "on Monday", "pl": "w poniedziałek"},
+      {"en": "on Friday morning", "pl": "w piątek rano"},
+      {"en": "on a weekday", "pl": "w dzień powszedni"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 2.1",
+    "sectionDescription": "Food and drink (1) / Żywność i napoje (1)",
+    "words": [
+      {"en": "apple", "pl": "jabłko"},
+      {"en": "biscuit", "pl": "ciasteczko, herbatnik"},
+      {"en": "bread", "pl": "chleb"},
+      {"en": "cereal", "pl": "płatki śniadaniowe"},
+      {"en": "cheese", "pl": "ser"},
+      {"en": "chicken", "pl": "kurczak"},
+      {"en": "chips", "pl": "frytki"},
+      {"en": "fish", "pl": "ryba"},
+      {"en": "fruit", "pl": "owoc, owoce"},
+      {"en": "ham", "pl": "szynka"},
+      {"en": "meat", "pl": "mięso"},
+      {"en": "orange juice", "pl": "sok pomarańczowy"},
+      {"en": "pancake", "pl": "naleśnik"},
+      {"en": "pasta", "pl": "makaron"},
+      {"en": "potato", "pl": "ziemniak"},
+      {"en": "rice", "pl": "ryż"},
+      {"en": "salad", "pl": "sałatka"},
+      {"en": "sandwich", "pl": "kanapka"},
+      {"en": "sausage", "pl": "kiełbaska"},
+      {"en": "tomato", "pl": "pomidor"},
+      {"en": "tuna", "pl": "tuńczyk"},
+      {"en": "vegetable", "pl": "warzywo"},
+      {"en": "water", "pl": "woda"},
+      {"en": "yoghurt", "pl": "jogurt"},
+      {"en": "breakfast", "pl": "śniadanie"},
+      {"en": "diary", "pl": "dzienniczek"},
+      {"en": "dinner", "pl": "obiad"},
+      {"en": "jam", "pl": "dżem"},
+      {"en": "lunch", "pl": "lunch"},
+      {"en": "make", "pl": "robić, przyrządzać"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 2.2",
+    "sectionDescription": "Food and drink (2) / Żywność i napoje (2)",
+    "words": [
+      {"en": "butter", "pl": "masło"},
+      {"en": "chocolate", "pl": "czekolada"},
+      {"en": "egg", "pl": "jajko"},
+      {"en": "flour", "pl": "mąka"},
+      {"en": "lemon", "pl": "cytryna"},
+      {"en": "milk", "pl": "mleko"},
+      {"en": "strawberry", "pl": "truskawka"},
+      {"en": "sugar", "pl": "cukier"},
+      {"en": "Cool!", "pl": "Fajnie!"},
+      {"en": "Good idea!", "pl": "Świetny pomysł!"},
+      {"en": "What a disaster!", "pl": "Ale katastrofa!"},
+      {"en": "birthday", "pl": "urodziny"},
+      {"en": "chocolate cake", "pl": "ciasto czekoladowe"},
+      {"en": "decorate", "pl": "dekorować"},
+      {"en": "horrible", "pl": "straszny"},
+      {"en": "look", "pl": "patrzeć"},
+      {"en": "put", "pl": "kłaść"},
+      {"en": "recipe", "pl": "przepis"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 2.3",
+    "sectionDescription": "Containers / Opakowania",
+    "words": [
+      {"en": "a bar of chocolate", "pl": "tabliczka czekolady"},
+      {"en": "a bottle of water", "pl": "butelka wody"},
+      {"en": "a can of cola", "pl": "puszka coli"},
+      {"en": "a carton of juice", "pl": "karton soku"},
+      {"en": "a jar of jam", "pl": "słoik dżemu"},
+      {"en": "a packet of biscuits", "pl": "paczka herbatników"},
+      {"en": "all of ...", "pl": "wszystkie..."},
+      {"en": "beach", "pl": "plaża"},
+      {"en": "beautiful", "pl": "piękny"},
+      {"en": "can't wait", "pl": "nie móc się doczekać"},
+      {"en": "chicken legs", "pl": "kurze udka"},
+      {"en": "go for a swim", "pl": "iść popływać"},
+      {"en": "go to the beach", "pl": "iść na plażę"},
+      {"en": "go to the park", "pl": "iść do parku"},
+      {"en": "have a picnic", "pl": "zorganizować piknik"},
+      {"en": "How many ...?", "pl": "Ile...? (używane z rzeczownikami policzalnymi)"},
+      {"en": "How much ...?", "pl": "Ile...? (używane z rzeczownikami niepoliczalnymi)"},
+      {"en": "quick", "pl": "szybko"},
+      {"en": "seagull", "pl": "mewa"},
+      {"en": "terrible", "pl": "straszny"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 2.4",
+    "sectionDescription": "Ordering food / Zamawianie jedzenia",
+    "words": [
+      {"en": "Anything else?", "pl": "Coś jeszcze?"},
+      {"en": "Can I have a vegetarian pizza, please?", "pl": "Czy mógłbym prosić pizzę wegetariańską?"},
+      {"en": "I'd like a lemonade, please.", "pl": "Poproszę lemoniadę."},
+      {"en": "What would you like?", "pl": "Na co masz ochotę?"},
+      {"en": "Would you like anything to drink?", "pl": "Czy masz ochotę na coś do picia?"},
+      {"en": "milkshake", "pl": "koktajl mleczny"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 2.5",
+    "sectionDescription": "",
+    "words": [
+      {"en": "all over the world", "pl": "na całym świecie"},
+      {"en": "art", "pl": "sztuka"},
+      {"en": "celebrity", "pl": "sławna osoba"},
+      {"en": "cook", "pl": "gotować"},
+      {"en": "cottage cheese", "pl": "twarożek"},
+      {"en": "cream", "pl": "śmietana"},
+      {"en": "Good luck!", "pl": "Powodzenia!"},
+      {"en": "have fun", "pl": "dobrze się bawić"},
+      {"en": "in the air", "pl": "w powietrzu"},
+      {"en": "ingredient", "pl": "składnik"},
+      {"en": "on top", "pl": "na górze, na wierzchu"},
+      {"en": "pan", "pl": "rondel, patelnia"},
+      {"en": "popular", "pl": "popularny"},
+      {"en": "round", "pl": "okrągły"},
+      {"en": "special", "pl": "specjalny"},
+      {"en": "sweet", "pl": "słodki"},
+      {"en": "throw", "pl": "rzucać"},
+      {"en": "use", "pl": "używać"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 2.6",
+    "sectionDescription": "",
+    "words": [
+      {"en": "have a quick breakfast", "pl": "zjeść szybkie śniadanie"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 3.1",
+    "sectionDescription": "Technology / Technologia",
+    "words": [
+      {"en": "camera", "pl": "aparat fotograficzny"},
+      {"en": "computer", "pl": "komputer"},
+      {"en": "headphones", "pl": "słuchawki"},
+      {"en": "keyboard", "pl": "klawiatura"},
+      {"en": "laptop", "pl": "laptop"},
+      {"en": "mobile phone", "pl": "telefon komórkowy"},
+      {"en": "mouse", "pl": "myszka"},
+      {"en": "printer", "pl": "drukarka"},
+      {"en": "screen", "pl": "monitor"},
+      {"en": "speakers", "pl": "głośniki"},
+      {"en": "tablet", "pl": "tablet"},
+      {"en": "TV", "pl": "telewizor"},
+      {"en": "chat online", "pl": "rozmawiać na czacie"},
+      {"en": "download a song", "pl": "ściągnąć piosenkę z internetu"},
+      {"en": "send an email", "pl": "wysłać e-mail"},
+      {"en": "surf the Internet", "pl": "surfować w internecie"},
+      {"en": "take a photo", "pl": "zrobić zdjęcie"},
+      {"en": "take a selfie", "pl": "zrobić sobie zdjęcie"},
+      {"en": "talk on the phone", "pl": "rozmawiać przez telefon"},
+      {"en": "text a friend", "pl": "wysłać przyjacielowi sms"},
+      {"en": "between", "pl": "pomiędzy"},
+      {"en": "go to bed", "pl": "iść do łóżka"},
+      {"en": "How many times...?", "pl": "Ile razy...?"},
+      {"en": "How often ...?", "pl": "Jak często...?"},
+      {"en": "more", "pl": "więcej"},
+      {"en": "spend time", "pl": "spędzać czas"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 3.2",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Go on!", "pl": "Śmiało!"},
+      {"en": "That's a surprise!", "pl": "A to niespodzianka!"},
+      {"en": "Wait a minute.", "pl": "Poczekaj chwilę."},
+      {"en": "ask for", "pl": "prosić o"},
+      {"en": "at the moment", "pl": "w tej chwili"},
+      {"en": "chat", "pl": "czat"},
+      {"en": "downstairs", "pl": "na dole"},
+      {"en": "interested in", "pl": "zainteresowany czymś"},
+      {"en": "laugh", "pl": "śmiać się"},
+      {"en": "Let's see!", "pl": "Zobaczmy!"},
+      {"en": "over there", "pl": "tam"},
+      {"en": "paper", "pl": "papier"},
+      {"en": "poor", "pl": "biedny"},
+      {"en": "sit", "pl": "siedzieć"},
+      {"en": "sit down", "pl": "usiąść"},
+      {"en": "take an order", "pl": "przyjąć zamówienie"},
+      {"en": "wrong", "pl": "zły, niepoprawny, źle"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 3.3",
+    "sectionDescription": "Feelings / Uczucia",
+    "words": [
+      {"en": "angry", "pl": "rozgniewany"},
+      {"en": "bored", "pl": "znudzony"},
+      {"en": "happy", "pl": "szczęśliwy"},
+      {"en": "sad", "pl": "smutny"},
+      {"en": "scared", "pl": "przestraszony"},
+      {"en": "tired", "pl": "zmęczony"},
+      {"en": "worried", "pl": "zmartwiony"},
+      {"en": "Come on!", "pl": "Chodź!"},
+      {"en": "dance", "pl": "tańczyć"},
+      {"en": "down North Street", "pl": "wzdłuż North Street"},
+      {"en": "drive", "pl": "kierować samochodem"},
+      {"en": "finger", "pl": "palec"},
+      {"en": "look tired", "pl": "wyglądać na zmęczonego"},
+      {"en": "look for", "pl": "szukać czegoś"},
+      {"en": "rubbish lorry", "pl": "śmieciarka"},
+      {"en": "There he is!", "pl": "Tam jest!"},
+      {"en": "What's that noise?", "pl": "Co to za hałas?"},
+      {"en": "What's the matter?", "pl": "O co chodzi?"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 3.4",
+    "sectionDescription": "Talking on the phone / Rozmawianie przez telefon",
+    "words": [
+      {"en": "Bye.", "pl": "Do zobaczenia!"},
+      {"en": "Can I speak to Eve, please?", "pl": "Czy mógłbym rozmawiać z Eve?"},
+      {"en": "Hello, it's Elena here.", "pl": "Halo, mówi Elena."},
+      {"en": "I'm afraid he's/she's out.", "pl": "Niestety, nie ma jej/go w domu."},
+      {"en": "It's Elena for you.", "pl": "To Elena do ciebie."},
+      {"en": "Just a moment/minute.", "pl": "Chwileczkę."},
+      {"en": "Hang on.", "pl": "Poczekaj."},
+      {"en": "See you soon / later.", "pl": "Do zobaczenia później."},
+      {"en": "magazine", "pl": "magazyn, czasopismo"},
+      {"en": "mobile", "pl": "telefon komórkowy"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 3.5",
+    "sectionDescription": "Adjectives with prepositions / Konstrukcje przymiotnikowe",
+    "words": [
+      {"en": "excited about", "pl": "podekscytowany czymś"},
+      {"en": "worried about", "pl": "zmartwiony czymś"},
+      {"en": "bad at", "pl": "kiepski z"},
+      {"en": "good at", "pl": "dobry z"},
+      {"en": "interested in", "pl": "zainteresowany czymś"},
+      {"en": "scared of", "pl": "przestraszony czymś"},
+      {"en": "a bit", "pl": "troszkę"},
+      {"en": "activities", "pl": "aktywności"},
+      {"en": "adventure", "pl": "przygoda"},
+      {"en": "alien", "pl": "obcy"},
+      {"en": "be sick", "pl": "mieć mdłości"},
+      {"en": "Do you like it here?", "pl": "Czy podoba ci się tutaj?"},
+      {"en": "enjoy", "pl": "lubić coś, cieszyć się czymś"},
+      {"en": "fly", "pl": "latać"},
+      {"en": "not really", "pl": "nie bardzo"},
+      {"en": "other", "pl": "inny"},
+      {"en": "real", "pl": "prawdziwy"},
+      {"en": "rocket", "pl": "rakieta"},
+      {"en": "simulator", "pl": "symulator"},
+      {"en": "space travel", "pl": "podróż kosmiczna"},
+      {"en": "space walking", "pl": "spacer w kosmosie"},
+      {"en": "spider", "pl": "pająk"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 3.6",
+    "sectionDescription": "",
+    "words": [
+      {"en": "also", "pl": "także"},
+      {"en": "own", "pl": "własny"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 4.1",
+    "sectionDescription": "Geographical features / Elementy krajobrazu",
+    "words": [
+      {"en": "beach", "pl": "plaża"},
+      {"en": "city", "pl": "miasto"},
+      {"en": "desert", "pl": "pustynia"},
+      {"en": "forest", "pl": "las"},
+      {"en": "island", "pl": "wyspa"},
+      {"en": "lake", "pl": "jezioro"},
+      {"en": "mountain", "pl": "góra"},
+      {"en": "river", "pl": "rzeka"},
+      {"en": "sea", "pl": "morze"},
+      {"en": "town", "pl": "miasteczko"},
+      {"en": "volcano", "pl": "wulkan"},
+      {"en": "waterfall", "pl": "wodospad"},
+      {"en": "between", "pl": "pomiędzy"},
+      {"en": "go on holiday", "pl": "jechać na wakacje"},
+      {"en": "go skiing", "pl": "jeździć na nartach"},
+      {"en": "go swimming", "pl": "iść popływać"},
+      {"en": "kayak", "pl": "pływać kajakiem"},
+      {"en": "surf", "pl": "surfować"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 4.2",
+    "sectionDescription": "Adjectives (1) / Przymiotniki (1)",
+    "words": [
+      {"en": "boring", "pl": "nudny"},
+      {"en": "cheap", "pl": "tani"},
+      {"en": "dangerous", "pl": "niebezpieczny"},
+      {"en": "difficult", "pl": "trudny"},
+      {"en": "easy", "pl": "łatwy"},
+      {"en": "exciting", "pl": "ekscytujący"},
+      {"en": "expensive", "pl": "drogi"},
+      {"en": "high", "pl": "wysoki"},
+      {"en": "low", "pl": "niski"},
+      {"en": "safe", "pl": "bezpieczny"},
+      {"en": "Hold on!", "pl": "Poczekaj!"},
+      {"en": "No way!", "pl": "Wykluczone!"},
+      {"en": "Well done!", "pl": "Dobra robota!"},
+      {"en": "activity centre", "pl": "centrum wypoczynkowe"},
+      {"en": "agree", "pl": "zgadzać się"},
+      {"en": "arm", "pl": "ramię"},
+      {"en": "bad", "pl": "zły"},
+      {"en": "better", "pl": "lepiej"},
+      {"en": "climb", "pl": "wspinać się"},
+      {"en": "climbing wall", "pl": "ścianka wspinaczkowa"},
+      {"en": "cycle", "pl": "jeździć na rowerze"},
+      {"en": "down", "pl": "w dół"},
+      {"en": "go cycling", "pl": "pojeździć na rowerze"},
+      {"en": "go kayaking", "pl": "popływać kajakiem"},
+      {"en": "good fun", "pl": "dobra zabawa"},
+      {"en": "hair", "pl": "włosy"},
+      {"en": "hand", "pl": "ręka"},
+      {"en": "hot", "pl": "gorący"},
+      {"en": "Japanese", "pl": "japoński"},
+      {"en": "left", "pl": "lewy"},
+      {"en": "leg", "pl": "noga"},
+      {"en": "long", "pl": "długi"},
+      {"en": "next", "pl": "następny"},
+      {"en": "slow", "pl": "wolny"},
+      {"en": "ticket", "pl": "bilet"},
+      {"en": "worse", "pl": "gorszy"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 4.3",
+    "sectionDescription": "Adjectives (2) / Przymiotniki (2)",
+    "words": [
+      {"en": "beautiful", "pl": "piękny"},
+      {"en": "fast", "pl": "szybki"},
+      {"en": "friendly", "pl": "przyjazny"},
+      {"en": "funny", "pl": "śmieszny"},
+      {"en": "intelligent", "pl": "inteligentny"},
+      {"en": "kind", "pl": "miły, uprzejmy"},
+      {"en": "strong", "pl": "silny"},
+      {"en": "African", "pl": "afrykański"},
+      {"en": "best", "pl": "najlepszy"},
+      {"en": "cute", "pl": "uroczy"},
+      {"en": "in the wild", "pl": "w naturalnym środowisku"},
+      {"en": "penguin", "pl": "pingwin"},
+      {"en": "python", "pl": "pyton"},
+      {"en": "warm", "pl": "ciepły"},
+      {"en": "worst", "pl": "najgorszy"},
+      {"en": "zoo-keeper", "pl": "opiekun zwierząt w zoo"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 4.4",
+    "sectionDescription": "Opinions / Opinie",
+    "words": [
+      {"en": "In my opinion, they are a bit silly.", "pl": "Moim zdaniem są trochę głupie."},
+      {"en": "I think Electro Max is more exciting.", "pl": "Uważam, że Electro Max jest bardziej emocjonujący."},
+      {"en": "My favourite film is Action Team.", "pl": "Moim ulubionym filmem jest Action Team."},
+      {"en": "What about you?", "pl": "A co ty o tym myślisz?"},
+      {"en": "What do you think of cartoons?", "pl": "Co myślisz o kreskówkach?"},
+      {"en": "What's your favourite film?", "pl": "Jaki jest twój ulubiony film?"},
+      {"en": "You're right. They're silly.", "pl": "Masz rację. Są głupie."},
+      {"en": "action film", "pl": "film akcji"},
+      {"en": "cartoon", "pl": "kreskówka"},
+      {"en": "especially", "pl": "szczególnie"},
+      {"en": "hedgehog", "pl": "jeż"},
+      {"en": "I like it a lot!", "pl": "Mnie się to bardzo podoba!"},
+      {"en": "I think so.", "pl": "Tak mi się wydaje."},
+      {"en": "pet rabbit", "pl": "królik"},
+      {"en": "prefer", "pl": "woleć"},
+      {"en": "remote", "pl": "pilot do telewizora"},
+      {"en": "So what?", "pl": "No i co z tego?"},
+      {"en": "That's true.", "pl": "To prawda."}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 4.5",
+    "sectionDescription": "",
+    "words": [
+      {"en": "building", "pl": "budynek"},
+      {"en": "centimetre", "pl": "centymetr"},
+      {"en": "giant", "pl": "wielki, gigantyczny"},
+      {"en": "humans", "pl": "ludzie"},
+      {"en": "kill", "pl": "zabić"},
+      {"en": "metre", "pl": "metr"},
+      {"en": "minute", "pl": "minuta"},
+      {"en": "old", "pl": "stary"},
+      {"en": "parachute", "pl": "spadochron"},
+      {"en": "pyramid", "pl": "piramida"},
+      {"en": "safe", "pl": "bezpieczny"},
+      {"en": "second", "pl": "sekunda"},
+      {"en": "snake", "pl": "wąż"},
+      {"en": "swimming pool", "pl": "basen"},
+      {"en": "tortoise", "pl": "żółw"},
+      {"en": "tree house", "pl": "domek na drzewie"},
+      {"en": "world record", "pl": "rekord świata"},
+      {"en": "young", "pl": "młody"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 4.6",
+    "sectionDescription": "",
+    "words": [
+      {"en": "both", "pl": "obaj, obie, oboje"},
+      {"en": "similar", "pl": "podobny"},
+      {"en": "snow", "pl": "śnieg"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 5.1",
+    "sectionDescription": "Places in town (1) / Miejsca w mieście (1)",
+    "words": [
+      {"en": "bank", "pl": "bank"},
+      {"en": "café", "pl": "kawiarnia"},
+      {"en": "cinema", "pl": "kino"},
+      {"en": "hospital", "pl": "szpital"},
+      {"en": "hotel", "pl": "hotel"},
+      {"en": "library", "pl": "biblioteka"},
+      {"en": "museum", "pl": "muzeum"},
+      {"en": "park", "pl": "park"},
+      {"en": "restaurant", "pl": "restauracja"},
+      {"en": "shop", "pl": "sklep"},
+      {"en": "stadium", "pl": "stadion"},
+      {"en": "supermarket", "pl": "supermarket"},
+      {"en": "theatre", "pl": "teatr"},
+      {"en": "Prepositions of place", "pl": "Przyimki opisujące położenie"},
+      {"en": "behind", "pl": "za"},
+      {"en": "between", "pl": "pomiędzy"},
+      {"en": "in front of", "pl": "przed"},
+      {"en": "next to", "pl": "obok"},
+      {"en": "opposite", "pl": "naprzeciw"},
+      {"en": "Egyptian mummy", "pl": "egipska mumia"},
+      {"en": "get", "pl": "dostać"},
+      {"en": "policeman", "pl": "policjant"},
+      {"en": "see a doctor", "pl": "iść do lekarza"},
+      {"en": "see a film", "pl": "obejrzeć film"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 5.2",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "It's a shame.", "pl": "Szkoda."},
+      {"en": "Never mind.", "pl": "Nieważne."},
+      {"en": "Sorry I'm late.", "pl": "Przepraszam za spóźnienie."},
+      {"en": "That was awesome!", "pl": "To było fantastyczne!"},
+      {"en": "Time expressions", "pl": "Określenia czasu"},
+      {"en": "yesterday", "pl": "wczoraj"},
+      {"en": "last month", "pl": "w zeszłym miesiącu"},
+      {"en": "last night", "pl": "wczoraj wieczorem"},
+      {"en": "last week", "pl": "w zeszłym tygodniu"},
+      {"en": "last Monday", "pl": "w zeszły poniedziałek"},
+      {"en": "in 2014", "pl": "w 2014 roku"},
+      {"en": "actor", "pl": "aktor"},
+      {"en": "after", "pl": "po"},
+      {"en": "bus", "pl": "autobus"},
+      {"en": "closed", "pl": "zamknięty"},
+      {"en": "flat tyre", "pl": "przebita opona"},
+      {"en": "ill", "pl": "chory"},
+      {"en": "little sister", "pl": "młodsza siostra"},
+      {"en": "out of battery", "pl": "rozładowany (np. o telefonie)"},
+      {"en": "pizzeria", "pl": "pizzeria"},
+      {"en": "plan", "pl": "plan"},
+      {"en": "sports centre", "pl": "centrum sportowe"},
+      {"en": "sunny", "pl": "słoneczny"},
+      {"en": "take", "pl": "brać"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 5.3",
+    "sectionDescription": "",
+    "words": [
+      {"en": "alone", "pl": "sam"},
+      {"en": "Are you OK?", "pl": "Wszystko w porządku?"},
+      {"en": "bad dream", "pl": "zły sen"},
+      {"en": "be asleep", "pl": "spać"},
+      {"en": "It wasn't me.", "pl": "To nie byłem ja."},
+      {"en": "muffin", "pl": "babeczka"},
+      {"en": "next", "pl": "następny"},
+      {"en": "plate", "pl": "talerz"},
+      {"en": "surprised", "pl": "zaskoczony"},
+      {"en": "tell the truth", "pl": "mówić prawdę"},
+      {"en": "wake up", "pl": "obudzić się"},
+      {"en": "What's happening?", "pl": "Co się dzieje?"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 5.4",
+    "sectionDescription": "Directions / Pytanie o drogę",
+    "words": [
+      {"en": "Excuse me. Where's North Street?", "pl": "Przepraszam, gdzie jest North Street?"},
+      {"en": "Go past the cinema.", "pl": "Idź, aż miniesz kino."},
+      {"en": "Go straight on.", "pl": "Idź prosto."},
+      {"en": "How can I get to the Science Museum?", "pl": "Jak dostanę się do Muzeum Nauki?"},
+      {"en": "I'm looking for a library.", "pl": "Szukam biblioteki."},
+      {"en": "Is it far?", "pl": "Czy to daleko?"},
+      {"en": "It's in/on Green Street.", "pl": "To jest na Green Street."},
+      {"en": "It's on the left/right.", "pl": "Jest po lewej/prawej."},
+      {"en": "Turn left/right.", "pl": "Skręć w lewo/prawo."}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 5.5",
+    "sectionDescription": "Places in town (2) / Miejsca w mieście (2)",
+    "words": [
+      {"en": "police station", "pl": "komisariat policji"},
+      {"en": "post office", "pl": "poczta"},
+      {"en": "shopping centre", "pl": "centrum handlowe"},
+      {"en": "sports centre", "pl": "centrum sportowe"},
+      {"en": "swimming pool", "pl": "basen"},
+      {"en": "train station", "pl": "stacja kolejowa"},
+      {"en": "busy", "pl": "zajęty"},
+      {"en": "famous for", "pl": "znany z"},
+      {"en": "film industry", "pl": "przemysł filmowy"},
+      {"en": "film studio", "pl": "studio filmowe"},
+      {"en": "large", "pl": "duży"},
+      {"en": "later", "pl": "później"},
+      {"en": "modern", "pl": "nowoczesny"},
+      {"en": "theme park", "pl": "park tematyczny"},
+      {"en": "tourist", "pl": "turysta"},
+      {"en": "village", "pl": "wioska"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 5.6",
+    "sectionDescription": "",
+    "words": [
+      {"en": "big", "pl": "duży"},
+      {"en": "boring", "pl": "nudny"},
+      {"en": "busy", "pl": "zajęty, ruchliwy"},
+      {"en": "clean", "pl": "czysty"},
+      {"en": "dirty", "pl": "brudny"},
+      {"en": "interesting", "pl": "interesujący"},
+      {"en": "modern", "pl": "nowoczesny"},
+      {"en": "old", "pl": "stary"},
+      {"en": "quiet", "pl": "cichy"},
+      {"en": "small", "pl": "mały"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 6.1",
+    "sectionDescription": "Jobs / Zawody",
+    "words": [
+      {"en": "artist", "pl": "artysta/artystka"},
+      {"en": "builder", "pl": "pracownik budowlany"},
+      {"en": "bus driver", "pl": "kierowca autobusu"},
+      {"en": "chef", "pl": "szef kuchni"},
+      {"en": "doctor", "pl": "lekarz/lekarka"},
+      {"en": "farmer", "pl": "rolnik"},
+      {"en": "footballer", "pl": "piłkarz"},
+      {"en": "nurse", "pl": "pielęgniarz/pielęgniarka"},
+      {"en": "office worker", "pl": "pracownik biurowy"},
+      {"en": "pilot", "pl": "pilot"},
+      {"en": "police officer", "pl": "policjant/policjantka"},
+      {"en": "shop assistant", "pl": "sprzedawca/sprzedawczyni w sklepie"},
+      {"en": "singer", "pl": "piosenkarz/piosenkarka"},
+      {"en": "teacher", "pl": "nauczyciel/nauczycielka"},
+      {"en": "vet", "pl": "weterynarz"},
+      {"en": "build", "pl": "budować"},
+      {"en": "cow", "pl": "krowa"},
+      {"en": "farm", "pl": "gospodarstwo rolne"},
+      {"en": "full", "pl": "pełen"},
+      {"en": "grow up", "pl": "dorastać"},
+      {"en": "office", "pl": "biuro"},
+      {"en": "photo album", "pl": "album ze zdjęciami"},
+      {"en": "place of work", "pl": "miejsce pracy"},
+      {"en": "shoe shop", "pl": "sklep obuwniczy"},
+      {"en": "uniform", "pl": "mundur"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 6.2",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Guess what?", "pl": "Zgadnij, co się stało!"},
+      {"en": "That was fun!", "pl": "To było fajne!"},
+      {"en": "What's new?", "pl": "Co słychać?"},
+      {"en": "again", "pl": "znowu"},
+      {"en": "arrive", "pl": "przybyć"},
+      {"en": "ask", "pl": "pytać"},
+      {"en": "babysit", "pl": "opiekować się dzieckiem"},
+      {"en": "be back", "pl": "wrócić"},
+      {"en": "bedtime", "pl": "pora spania"},
+      {"en": "clean", "pl": "wyczyszczać"},
+      {"en": "cry", "pl": "płakać"},
+      {"en": "dirty", "pl": "brudny"},
+      {"en": "finally", "pl": "w końcu"},
+      {"en": "jump", "pl": "skakać"},
+      {"en": "stay at a friend's house", "pl": "zatrzymać się w domu przyjaciela"},
+      {"en": "then", "pl": "potem"},
+      {"en": "through", "pl": "przez"},
+      {"en": "time for bed", "pl": "czas spać"},
+      {"en": "walk downstairs", "pl": "zejść na dół"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 6.3",
+    "sectionDescription": "",
+    "words": [
+      {"en": "at work", "pl": "w pracy"},
+      {"en": "delivery", "pl": "dostawa"},
+      {"en": "dinnertime", "pl": "czas kolacji"},
+      {"en": "feel bad", "pl": "źle się czuć"},
+      {"en": "feel ill", "pl": "czuć się chorym"},
+      {"en": "for free", "pl": "za darmo"},
+      {"en": "go to work", "pl": "iść do pracy"},
+      {"en": "in the world", "pl": "na świecie"},
+      {"en": "in town", "pl": "w mieście"},
+      {"en": "piece", "pl": "kawałek"},
+      {"en": "thirsty", "pl": "spragniony"},
+      {"en": "this morning", "pl": "dziś rano"},
+      {"en": "wash the dishes", "pl": "umyć naczynia"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 6.4",
+    "sectionDescription": "Asking for permission / Pytanie o pozwolenie",
+    "words": [
+      {"en": "Can I borrow a pen, please?", "pl": "Czy mogę pożyczyć długopis?"},
+      {"en": "Is it OK if I use your mobile?", "pl": "Czy mogę skorzystać z twojego telefonu?"},
+      {"en": "No, sorry, it isn't OK.", "pl": "Nie, przykro mi, ale to nie jest w porządku."},
+      {"en": "No, sorry, you can't.", "pl": "Nie, przykro mi, ale nie możesz."},
+      {"en": "Oh, all right.", "pl": "W porządku."},
+      {"en": "Sure, no problem.", "pl": "Jasne, nie ma problemu."},
+      {"en": "Yes, that's fine.", "pl": "Tak, proszę."},
+      {"en": "Yes, you can.", "pl": "Tak, możesz."},
+      {"en": "borrow", "pl": "pożyczyć (od kogoś)"},
+      {"en": "forget", "pl": "zapomnieć"},
+      {"en": "go to a party", "pl": "iść na przyjęcie"},
+      {"en": "leave", "pl": "wyjść"},
+      {"en": "pair", "pl": "para"},
+      {"en": "polite", "pl": "uprzejmy"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 6.5",
+    "sectionDescription": "Jobs at home / Prace domowe",
+    "words": [
+      {"en": "do the shopping", "pl": "robić zakupy"},
+      {"en": "empty the bin", "pl": "wyrzucić śmieci"},
+      {"en": "look after your brother/sister", "pl": "opiekować się bratem/siostrą"},
+      {"en": "make your bed", "pl": "pościelić łóżko"},
+      {"en": "tidy your room", "pl": "posprzątać w pokoju"},
+      {"en": "walk the dog", "pl": "wyprowadzić psa"},
+      {"en": "wash the car", "pl": "umyć samochód"},
+      {"en": "wash the dishes", "pl": "pozmywać naczynia"},
+      {"en": "ask", "pl": "pytać, prosić"},
+      {"en": "extra money", "pl": "dodatkowe pieniądze"},
+      {"en": "free time", "pl": "czas wolny"},
+      {"en": "give", "pl": "dawać"},
+      {"en": "help around the house", "pl": "pomagać w pracach domowych"},
+      {"en": "little cousin", "pl": "młodszy kuzyn / młodsza kuzynka"},
+      {"en": "money box", "pl": "skarbonka"},
+      {"en": "pocket money", "pl": "kieszonkowe"},
+      {"en": "save for", "pl": "oszczędzać na"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 6.6",
+    "sectionDescription": "",
+    "words": [
+      {"en": "Mexican", "pl": "meksykański"},
+      {"en": "midnight", "pl": "północ"},
+      {"en": "shark", "pl": "rekin"},
+      {"en": "taco", "pl": "taco (rodzaj meksykańskiej potrawy)"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 7.1",
+    "sectionDescription": "Transport nouns / Transport (rzeczowniki)",
+    "words": [
+      {"en": "bike", "pl": "rower"},
+      {"en": "boat", "pl": "łódź"},
+      {"en": "bus", "pl": "autobus"},
+      {"en": "car", "pl": "samochód"},
+      {"en": "motorbike", "pl": "motocykl"},
+      {"en": "plane", "pl": "samolot"},
+      {"en": "taxi", "pl": "taksówka"},
+      {"en": "train", "pl": "pociąg"},
+      {"en": "tram", "pl": "tramwaj"},
+      {"en": "underground", "pl": "metro"},
+      {"en": "Transport verbs", "pl": "Transport (czasowniki)"},
+      {"en": "arrive", "pl": "dojechać, przybyć"},
+      {"en": "get off", "pl": "wysiąść"},
+      {"en": "get on", "pl": "wsiąść"},
+      {"en": "leave", "pl": "odjechać"},
+      {"en": "take (a bus)", "pl": "pojechać (autobusem)"},
+      {"en": "carry", "pl": "nieść"},
+      {"en": "every ten minutes", "pl": "co dziesięć minut"},
+      {"en": "go by bike", "pl": "pojechać rowerem"},
+      {"en": "go by boat", "pl": "popłynąć łodzią"},
+      {"en": "go on foot", "pl": "pójść pieszo"},
+      {"en": "in the air", "pl": "w powietrzu"},
+      {"en": "on time", "pl": "na czas"},
+      {"en": "on water", "pl": "na wodzie"},
+      {"en": "school journey", "pl": "podróż do szkoły"},
+      {"en": "weather", "pl": "pogoda"},
+      {"en": "wheel", "pl": "koło"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 7.2",
+    "sectionDescription": "Travel equipment / Przedmioty związane z podróżowaniem",
+    "words": [
+      {"en": "backpack", "pl": "plecak"},
+      {"en": "camera", "pl": "aparat fotograficzny"},
+      {"en": "guidebook", "pl": "przewodnik"},
+      {"en": "sleeping bag", "pl": "śpiwór"},
+      {"en": "suitcase", "pl": "walizka"},
+      {"en": "sunglasses", "pl": "okulary przeciwsłoneczne"},
+      {"en": "tent", "pl": "namiot"},
+      {"en": "torch", "pl": "latarka"},
+      {"en": "Don't worry!", "pl": "Nie martw się!"},
+      {"en": "Don't panic!", "pl": "Nie panikuj!"},
+      {"en": "Oh dear!", "pl": "Ojej!"},
+      {"en": "Atishoo!", "pl": "Apsik!"},
+      {"en": "go away for the weekend", "pl": "wyjechać na weekend"},
+      {"en": "go camping", "pl": "jechać pod namiot"},
+      {"en": "go for a walk", "pl": "iść na spacer"},
+      {"en": "go to the beach", "pl": "iść na plażę"},
+      {"en": "go to the mountains", "pl": "pojechać w góry"},
+      {"en": "have a cold", "pl": "przeziębić się"},
+      {"en": "It's getting cold.", "pl": "Robi się zimno."},
+      {"en": "sleep well", "pl": "dobrze spać"},
+      {"en": "stay in a hostel", "pl": "zatrzymać się w hostelu"},
+      {"en": "tell", "pl": "powiedzieć"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 7.3",
+    "sectionDescription": "Things to do on holiday / Aktywności wakacyjne",
+    "words": [
+      {"en": "buy a souvenir", "pl": "kupić pamiątkę"},
+      {"en": "eat at a restaurant", "pl": "jeść w restauracji"},
+      {"en": "go sightseeing", "pl": "zwiedzać"},
+      {"en": "make friends", "pl": "zaprzyjaźnić się"},
+      {"en": "stay in a hotel", "pl": "zatrzymać się w hotelu"},
+      {"en": "take photos", "pl": "robić zdjęcia"},
+      {"en": "visit a museum", "pl": "odwiedzić muzeum"},
+      {"en": "be back", "pl": "wrócić"},
+      {"en": "girlfriend", "pl": "dziewczyna, przyjaciółka"},
+      {"en": "have a good time", "pl": "dobrze się bawić"},
+      {"en": "Roman holiday", "pl": "rzymskie wakacje"},
+      {"en": "Rome", "pl": "Rzym"},
+      {"en": "stay with a friend", "pl": "zatrzymać się u przyjaciela"},
+      {"en": "the Colosseum", "pl": "Koloseum"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 7.4",
+    "sectionDescription": "Buying a ticket / Kupowanie biletu",
+    "words": [
+      {"en": "I'd like a ticket to London, please.", "pl": "Poproszę bilet do Londynu."},
+      {"en": "Here you are.", "pl": "Proszę."},
+      {"en": "How much is it?", "pl": "Ile płacę?"},
+      {"en": "It's ten pounds twenty, please.", "pl": "Dziesięć funtów i dwadzieścia pensów."},
+      {"en": "What time does the train leave?", "pl": "O której godzinie odjeżdża pociąg?"},
+      {"en": "At seven thirty.", "pl": "O siódmej trzydzieści."},
+      {"en": "What time does it arrive?", "pl": "O której godzinie przyjeżdża?"},
+      {"en": "At eight.", "pl": "O ósmej."},
+      {"en": "Thanks.", "pl": "Dziękuję."}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 7.5",
+    "sectionDescription": "",
+    "words": [
+      {"en": "expedition", "pl": "ekspedycja, wyprawa"},
+      {"en": "explorer", "pl": "odkrywca"},
+      {"en": "for eight hours", "pl": "przez osiem godzin"},
+      {"en": "heavy", "pl": "ciężki"},
+      {"en": "P.E. kit", "pl": "strój na W-F"},
+      {"en": "polar bear", "pl": "niedźwiedź polarny"},
+      {"en": "schoolchildren", "pl": "dzieci w wieku szkolnym"},
+      {"en": "schoolwork", "pl": "zajęcia szkolne"},
+      {"en": "short", "pl": "krótki"},
+      {"en": "ski", "pl": "jeździć na nartach"},
+      {"en": "take 48 days", "pl": "zająć/trwać 48 dni"},
+      {"en": "the English Channel", "pl": "kanał La Manche"},
+      {"en": "the South Pole", "pl": "biegun południowy"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 7.6",
+    "sectionDescription": "",
+    "words": [
+      {"en": "luckily", "pl": "na szczęście"},
+      {"en": "postcard", "pl": "pocztówka"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 8.1",
+    "sectionDescription": "Events / Wydarzenia",
+    "words": [
+      {"en": "barbecue", "pl": "przyjęcie z grillem"},
+      {"en": "birthday party", "pl": "przyjęcie urodzinowe"},
+      {"en": "concert", "pl": "koncert"},
+      {"en": "dance show", "pl": "pokaz tańca"},
+      {"en": "fancy dress party", "pl": "bal przebierańców"},
+      {"en": "football match", "pl": "mecz piłki nożnej"},
+      {"en": "picnic", "pl": "piknik"},
+      {"en": "play", "pl": "sztuka"},
+      {"en": "sleepover", "pl": "piżama party"},
+      {"en": "talent competition", "pl": "konkurs talentów"},
+      {"en": "Ordinal numbers", "pl": "Liczebniki porządkowe"},
+      {"en": "the first", "pl": "pierwszy"},
+      {"en": "the second", "pl": "drugi"},
+      {"en": "the third", "pl": "trzeci"},
+      {"en": "the fourth", "pl": "czwarty"},
+      {"en": "the fifth", "pl": "piąty"},
+      {"en": "the sixth", "pl": "szósty"},
+      {"en": "the seventh", "pl": "siódmy"},
+      {"en": "the eighth", "pl": "ósmy"},
+      {"en": "the ninth", "pl": "dziewiąty"},
+      {"en": "the tenth", "pl": "dziesiąty"},
+      {"en": "the eleventh", "pl": "jedenasty"},
+      {"en": "the twelfth", "pl": "dwunasty"},
+      {"en": "the thirteenth", "pl": "trzynasty"},
+      {"en": "the twentieth", "pl": "dwudziesty"},
+      {"en": "the twenty-first", "pl": "dwudziesty pierwszy"},
+      {"en": "the thirtieth", "pl": "trzydziesty"},
+      {"en": "get presents", "pl": "dostawać prezenty"},
+      {"en": "prize", "pl": "nagroda"},
+      {"en": "Pyjamas", "pl": "piżama"},
+      {"en": "sing 'Happy Birthday'", "pl": "śpiewać „Sto lat!”"},
+      {"en": "star", "pl": "gwiazda"},
+      {"en": "take part in a competition", "pl": "wziąć udział w konkursie/zawodach"},
+      {"en": "tell a story", "pl": "opowiadać historię"},
+      {"en": "wear a costume", "pl": "mieć na sobie kostium"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 8.2",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Don't be sad.", "pl": "Nie smuć się."},
+      {"en": "I can't wait!", "pl": "Nie mogę się doczekać!"},
+      {"en": "That's a pity.", "pl": "Szkoda."},
+      {"en": "birthday card", "pl": "kartka urodzinowa"},
+      {"en": "blow up the balloons", "pl": "nadmuchać balony"},
+      {"en": "download", "pl": "ściągać z internetu"},
+      {"en": "I'm really sorry.", "pl": "Jest mi naprawdę przykro."},
+      {"en": "jobs to do", "pl": "prace do wykonania"},
+      {"en": "surprise party", "pl": "przyjęcie niespodzianka"},
+      {"en": "tomorrow", "pl": "jutro"},
+      {"en": "What time...?", "pl": "O której godzinie...?"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 8.3",
+    "sectionDescription": "Types of music / Rodzaje muzyki",
+    "words": [
+      {"en": "classical", "pl": "poważna"},
+      {"en": "jazz", "pl": "jazz"},
+      {"en": "pop", "pl": "pop"},
+      {"en": "rap", "pl": "rap"},
+      {"en": "reggae", "pl": "reggae"},
+      {"en": "rock", "pl": "rock"},
+      {"en": "in the 1970s", "pl": "w latach siedemdziesiątych (dwudziestego wieku)"},
+      {"en": "invite", "pl": "zaprosić"},
+      {"en": "lots of", "pl": "mnóstwo"},
+      {"en": "musician", "pl": "muzyk"},
+      {"en": "play a concert", "pl": "grać koncert"},
+      {"en": "pop singer", "pl": "wokalista pop"},
+      {"en": "quartet", "pl": "kwartet"},
+      {"en": "rapper", "pl": "raper"},
+      {"en": "rock band", "pl": "zespół rockowy"},
+      {"en": "suddenly", "pl": "nagle"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 8.4",
+    "sectionDescription": "Making arrangements / Umawianie się",
+    "words": [
+      {"en": "Are you busy next Thursday?", "pl": "Czy jesteś zajęty w następny czwartek?"},
+      {"en": "I've got tickets for a basketball match.", "pl": "Mam bilety na mecz koszykówki."},
+      {"en": "Would you like to come?", "pl": "Czy chciałbyś pójść?"},
+      {"en": "That sounds great. I'd love to come.", "pl": "Brzmi świetnie. Pewnie, że chciałbym pójść."},
+      {"en": "What time does it start?", "pl": "O której godzinie się zaczyna?"},
+      {"en": "Where shall we meet?", "pl": "Gdzie się spotkamy?"},
+      {"en": "Let's meet outside the Arena at six o'clock.", "pl": "Spotkajmy się przed Areną o szóstej."},
+      {"en": "against", "pl": "przeciwko"},
+      {"en": "football cup final", "pl": "finał turnieju piłkarskiego"},
+      {"en": "half past six", "pl": "wpół do siódmej"},
+      {"en": "See you then.", "pl": "Do zobaczenia!"},
+      {"en": "support", "pl": "wspierać, dopingować"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 5 - LESSON 8.5",
+    "sectionDescription": "",
+    "words": [
+      {"en": "aged 7-11", "pl": "w wieku 7-11 lat"},
+      {"en": "at midnight", "pl": "o północy"},
+      {"en": "explore", "pl": "eksplorować, odkrywać"},
+      {"en": "get ready for", "pl": "przygotować się do"},
+      {"en": "have a tour of the aquarium", "pl": "zwiedzić akwarium"},
+      {"en": "later", "pl": "później"},
+      {"en": "toothbrush", "pl": "szczoteczka do zębów"},
+      {"en": "underwater creature", "pl": "podwodne stworzenie"},
+      {"en": "walk around", "pl": "spacerować"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 1.1",
+    "sectionDescription": "Culture: People / Ludzie związani z kulturą",
+    "words": [
+      {"en": "actor", "pl": "aktor"},
+      {"en": "artist", "pl": "artysta"},
+      {"en": "dancer", "pl": "tancerz"},
+      {"en": "director", "pl": "reżyser"},
+      {"en": "musician", "pl": "muzyk"},
+      {"en": "photographer", "pl": "fotograf"},
+      {"en": "writer", "pl": "pisarz"},
+      {"en": "act in plays/films", "pl": "grać w teatrze / w filmach"},
+      {"en": "acting", "pl": "aktorstwo"},
+      {"en": "action film", "pl": "film akcji"},
+      {"en": "art", "pl": "sztuka"},
+      {"en": "ballet", "pl": "balet"},
+      {"en": "be interested in sth", "pl": "interesować się czymś"},
+      {"en": "be into sth", "pl": "pasjonować się czymś"},
+      {"en": "camera", "pl": "kamera, aparat fotograficzny"},
+      {"en": "cartoon", "pl": "kreskówka"},
+      {"en": "cinema", "pl": "kino"},
+      {"en": "classical music", "pl": "muzyka poważna"},
+      {"en": "comedy", "pl": "komedia"},
+      {"en": "comic", "pl": "komiks"},
+      {"en": "concert", "pl": "koncert"},
+      {"en": "dance", "pl": "tańczyć"},
+      {"en": "dancing", "pl": "taniec"},
+      {"en": "documentary", "pl": "film dokumentalny"},
+      {"en": "drawing", "pl": "rysunek"},
+      {"en": "drums", "pl": "perkusja"},
+      {"en": "fantasy film", "pl": "film fantasy"},
+      {"en": "flamenco", "pl": "flamenco (rodzaj tańca)"},
+      {"en": "graphic novel", "pl": "komiks, powieść graficzna"},
+      {"en": "guitar", "pl": "gitara"},
+      {"en": "happy ending", "pl": "szczęśliwe zakończenie"},
+      {"en": "hip-hop", "pl": "hip-hop"},
+      {"en": "horror film", "pl": "horror"},
+      {"en": "horror story", "pl": "przerażająca opowieść"},
+      {"en": "learn the (dance) steps", "pl": "nauczyć się kroków (w tańcu)"},
+      {"en": "listen to music / hip-hop", "pl": "słuchać muzyki / hip-hopu"},
+      {"en": "modern art", "pl": "sztuka nowoczesna"},
+      {"en": "music", "pl": "muzyka"},
+      {"en": "novel", "pl": "powieść"},
+      {"en": "painting", "pl": "obraz"},
+      {"en": "photography", "pl": "fotografia"},
+      {"en": "piano", "pl": "pianino, fortepian"},
+      {"en": "picture", "pl": "zdjęcie, obrazek"},
+      {"en": "play", "pl": "sztuka"},
+      {"en": "play the guitar", "pl": "grać na gitarze"},
+      {"en": "pop", "pl": "pop"},
+      {"en": "reading", "pl": "czytanie"},
+      {"en": "rock", "pl": "rock"},
+      {"en": "salsa", "pl": "salsa"},
+      {"en": "science fiction film", "pl": "film science-fiction"},
+      {"en": "story", "pl": "historia"},
+      {"en": "techno", "pl": "techno"},
+      {"en": "traditional", "pl": "tradycyjny"},
+      {"en": "violin", "pl": "skrzypce"},
+      {"en": "writing", "pl": "pisanie"},
+      {"en": "Zumba", "pl": "zumba"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 1.2",
+    "sectionDescription": "",
+    "words": [
+      {"en": "blog", "pl": "blog"},
+      {"en": "go dancing", "pl": "iść potańczyć"},
+      {"en": "poem", "pl": "wiersz"},
+      {"en": "read film reviews", "pl": "czytać recenzje filmowe"},
+      {"en": "sing", "pl": "śpiewać"},
+      {"en": "take photos / selfies", "pl": "robić zdjęcia / zdjęcia samemu sobie"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 1.3",
+    "sectionDescription": "",
+    "words": [
+      {"en": "adult", "pl": "dorosły"},
+      {"en": "couch potato", "pl": "osoba, która spędza większość czasu przed telewizorem"},
+      {"en": "have square eyes", "pl": "oglądać za dużo telewizji"},
+      {"en": "kid", "pl": "dziecko, dzieciak"},
+      {"en": "middle-aged (person)", "pl": "osoba w średnim wieku"},
+      {"en": "pensioner", "pl": "emeryt"},
+      {"en": "survey", "pl": "ankieta"},
+      {"en": "teenager", "pl": "nastolatek"},
+      {"en": "TV programme", "pl": "program TV"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 1.4",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Not right now.", "pl": "Nie teraz."},
+      {"en": "To be honest, ...", "pl": "Szczerze mówiąc..."},
+      {"en": "Awesome!", "pl": "Znakomicie!"},
+      {"en": "I've no idea.", "pl": "Nie mam pojęcia."},
+      {"en": "Yeah, right.", "pl": "Skoro tak mówisz..."},
+      {"en": "poster", "pl": "plakat"},
+      {"en": "make videos", "pl": "tworzyć klipy wideo"},
+      {"en": "watch music/pop videos", "pl": "oglądać teledyski"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 1.5",
+    "sectionDescription": "",
+    "words": [
+      {"en": "celebrity", "pl": "znana osoba"},
+      {"en": "check sports results / the weather forecast / the news", "pl": "sprawdzać wyniki sportowe / prognozę pogody / wiadomości"},
+      {"en": "current affairs", "pl": "sprawy bieżące, aktualności"},
+      {"en": "film/game review", "pl": "recenzja filmu / gry"},
+      {"en": "find information", "pl": "znaleźć informacje"},
+      {"en": "game show", "pl": "teleturniej"},
+      {"en": "horoscope", "pl": "horoskop"},
+      {"en": "magazine", "pl": "magazyn, czasopismo"},
+      {"en": "media", "pl": "media"},
+      {"en": "message board", "pl": "forum internetowe"},
+      {"en": "news headlines", "pl": "skrót najważniejszych wiadomości"},
+      {"en": "phone-in", "pl": "program, podczas którego słuchacze telefonują do studia"},
+      {"en": "radio station", "pl": "stacja radiowa"},
+      {"en": "reality show", "pl": "reality show"},
+      {"en": "soap opera", "pl": "opera mydlana"},
+      {"en": "sports pages", "pl": "sekcja sportowa w gazecie"},
+      {"en": "talk show", "pl": "talk show"},
+      {"en": "video clip", "pl": "klip wideo"},
+      {"en": "weather forecast", "pl": "prognoza pogody"},
+      {"en": "website", "pl": "strona internetowa"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 1.6",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "No way!", "pl": "Nie ma mowy!"},
+      {"en": "Come on, please!", "pl": "Proszę cię!"},
+      {"en": "Hold on!", "pl": "Poczekaj!"},
+      {"en": "(cinema) programme", "pl": "repertuar (kina)"},
+      {"en": "romantic film", "pl": "romantyczny film"},
+      {"en": "row", "pl": "rząd (np. w kinie)"},
+      {"en": "screening", "pl": "seans kinowy"},
+      {"en": "seat", "pl": "miejsce (w kinie)"},
+      {"en": "see what's on (at the cinema)", "pl": "sprawdzać, co grają w kinie"},
+      {"en": "sold out", "pl": "wyprzedany"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 1.7",
+    "sectionDescription": "",
+    "words": [
+      {"en": "hometown", "pl": "miasto rodzinne"},
+      {"en": "hobby", "pl": "hobby"},
+      {"en": "interests", "pl": "zainteresowania"},
+      {"en": "nationality", "pl": "narodowość"},
+      {"en": "be mad about sth", "pl": "pasjonować się czymś"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 2.1",
+    "sectionDescription": "Clothes and accessories / Ubrania i dodatki",
+    "words": [
+      {"en": "accessories", "pl": "dodatki do ubrań, akcesoria"},
+      {"en": "baseball cap", "pl": "czapka bejsbolówka"},
+      {"en": "belt", "pl": "pasek"},
+      {"en": "blouse", "pl": "bluzka"},
+      {"en": "boots", "pl": "kozaki, wysokie buty"},
+      {"en": "bracelet", "pl": "bransoletka"},
+      {"en": "clothes", "pl": "ubrania"},
+      {"en": "dress", "pl": "sukienka"},
+      {"en": "earring", "pl": "kolczyk"},
+      {"en": "fancy-dress costume", "pl": "kostium na bal przebierańców"},
+      {"en": "football top", "pl": "koszulka piłkarska"},
+      {"en": "footwear", "pl": "obuwie"},
+      {"en": "glasses", "pl": "okulary"},
+      {"en": "handbag", "pl": "torebka damska"},
+      {"en": "hoodie", "pl": "bluza z kapturem"},
+      {"en": "jacket", "pl": "kurtka"},
+      {"en": "jeans", "pl": "dżinsy"},
+      {"en": "jewellery", "pl": "biżuteria"},
+      {"en": "leggings", "pl": "legginsy"},
+      {"en": "necklace", "pl": "naszyjnik"},
+      {"en": "piercing", "pl": "kolczyk, piercing"},
+      {"en": "pyjamas", "pl": "piżama"},
+      {"en": "scarf", "pl": "szalik"},
+      {"en": "shirt", "pl": "koszula"},
+      {"en": "shoe", "pl": "but"},
+      {"en": "shorts", "pl": "krótkie spodenki, szorty"},
+      {"en": "skirt", "pl": "spódnica"},
+      {"en": "sweater", "pl": "sweter"},
+      {"en": "tattoo", "pl": "tatuaż"},
+      {"en": "tracksuit", "pl": "dres"},
+      {"en": "trainers", "pl": "buty sportowe"},
+      {"en": "trousers", "pl": "spodnie"},
+      {"en": "T-shirt", "pl": "koszulka, T-shirt"},
+      {"en": "underwear", "pl": "bielizna"},
+      {"en": "baggy", "pl": "luźny"},
+      {"en": "casual", "pl": "nieformalny"},
+      {"en": "checked", "pl": "w kratkę"},
+      {"en": "cotton", "pl": "bawełniany"},
+      {"en": "hat", "pl": "kapelusz"},
+      {"en": "leather", "pl": "skórzany"},
+      {"en": "logo", "pl": "logo"},
+      {"en": "plain", "pl": "gładki, bez wzoru"},
+      {"en": "striped", "pl": "w paski"},
+      {"en": "tight", "pl": "obcisły"},
+      {"en": "top", "pl": "koszulka, bluzka"},
+      {"en": "woolly", "pl": "wełniany"},
+      {"en": "fashion", "pl": "moda"},
+      {"en": "go out with friends", "pl": "wychodzić z przyjaciółmi"},
+      {"en": "go to a party / a wedding", "pl": "iść na przyjęcie / wesele"},
+      {"en": "wear", "pl": "nosić (ubranie)"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 2.2",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Catch you later!", "pl": "Do zobaczenia później!"},
+      {"en": "I don't get it.", "pl": "Nie rozumiem."},
+      {"en": "See you!", "pl": "Do zobaczenia!"},
+      {"en": "breakfast time", "pl": "czas na śniadanie"},
+      {"en": "brush your hair", "pl": "czesać włosy"},
+      {"en": "get ready (for school)", "pl": "przygotowywać się (do wyjścia do szkoły)"},
+      {"en": "school uniform", "pl": "mundurek szkolny"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 2.3",
+    "sectionDescription": "Adjectives ending in -ing/-ed / Przymiotniki z końcówkami -ing/-ed",
+    "words": [
+      {"en": "annoyed", "pl": "zdenerwowany, poirytowany"},
+      {"en": "annoying", "pl": "denerwujący, irytujący"},
+      {"en": "bored", "pl": "znudzony"},
+      {"en": "boring", "pl": "nudny"},
+      {"en": "embarrassed", "pl": "zawstydzony, zakłopotany"},
+      {"en": "embarrassing", "pl": "kłopotliwy, żenujący"},
+      {"en": "excited", "pl": "podekscytowany"},
+      {"en": "exciting", "pl": "ekscytujący"},
+      {"en": "frightened", "pl": "przerażony"},
+      {"en": "frightening", "pl": "przerażający"},
+      {"en": "interested", "pl": "zainteresowany"},
+      {"en": "interesting", "pl": "interesujący"},
+      {"en": "irritated", "pl": "poirytowany"},
+      {"en": "irritating", "pl": "irytujący"},
+      {"en": "relaxed", "pl": "zrelaksowany"},
+      {"en": "relaxing", "pl": "relaksujący"},
+      {"en": "shocked", "pl": "zaszokowany"},
+      {"en": "shocking", "pl": "szokujący"},
+      {"en": "tired", "pl": "zmęczony"},
+      {"en": "tiring", "pl": "męczący"},
+      {"en": "worried", "pl": "zmartwiony"},
+      {"en": "worrying", "pl": "niepokojący"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 2.4",
+    "sectionDescription": "",
+    "words": [
+      {"en": "break free of", "pl": "przestać coś robić, uwolnić się od czegoś"},
+      {"en": "change a routine", "pl": "zmienić zwyczaj"},
+      {"en": "collect money (for charity)", "pl": "zbierać pieniądze (na cele charytatywne)"},
+      {"en": "do well (at sth)", "pl": "dobrze sobie radzić (z czymś)"},
+      {"en": "get better (at sth)", "pl": "coraz lepiej sobie radzić (z czymś)"},
+      {"en": "lose weight", "pl": "schudnąć"},
+      {"en": "save money (to buy sth)", "pl": "oszczędzać pieniądze (aby coś kupić)"},
+      {"en": "take part in (an event)", "pl": "wziąć udział w (wydarzeniu)"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 2.5",
+    "sectionDescription": "Personality adjectives / Przymiotniki opisujące charakter",
+    "words": [
+      {"en": "big-headed", "pl": "zarozumiały"},
+      {"en": "bossy", "pl": "despotyczny"},
+      {"en": "chatty", "pl": "gadatliwy"},
+      {"en": "cheerful", "pl": "radosny"},
+      {"en": "friendly", "pl": "przyjazny"},
+      {"en": "hard-working", "pl": "pracowity"},
+      {"en": "helpful", "pl": "pomocny"},
+      {"en": "lazy", "pl": "leniwy"},
+      {"en": "moody", "pl": "humorzasty"},
+      {"en": "outgoing", "pl": "towarzyski, kontaktowy"},
+      {"en": "polite", "pl": "uprzejmy"},
+      {"en": "quiet", "pl": "cichy"},
+      {"en": "rude", "pl": "niegrzeczny"},
+      {"en": "selfish", "pl": "samolubny"},
+      {"en": "shy", "pl": "nieśmiały"},
+      {"en": "talkative", "pl": "rozmowny"},
+      {"en": "tidy", "pl": "schludny"},
+      {"en": "untidy", "pl": "nieporządny"},
+      {"en": "get annoyed", "pl": "irytować się"},
+      {"en": "insult", "pl": "obrażać (kogoś)"},
+      {"en": "positive", "pl": "pozytywny"},
+      {"en": "wonderful", "pl": "wspaniały"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 2.6",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "How are things?", "pl": "Co słychać?"},
+      {"en": "How's life?", "pl": "Jak się masz?"},
+      {"en": "I don't believe it!", "pl": "Nie wierzę!"},
+      {"en": "learn (how to do sth)", "pl": "uczyć się (jak coś zrobić)"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 2.7",
+    "sectionDescription": "",
+    "words": [
+      {"en": "Christmas", "pl": "święta Bożego Narodzenia"},
+      {"en": "Easter", "pl": "Wielkanoc"},
+      {"en": "New Year's Day", "pl": "Nowy Rok"},
+      {"en": "season", "pl": "pora roku"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 3.1",
+    "sectionDescription": "Animals / Zwierzęta",
+    "words": [
+      {"en": "ant", "pl": "mrówka"},
+      {"en": "bear", "pl": "niedźwiedź"},
+      {"en": "bee", "pl": "pszczoła"},
+      {"en": "butterfly", "pl": "motyl"},
+      {"en": "cat", "pl": "kot"},
+      {"en": "chicken", "pl": "kura"},
+      {"en": "chimp", "pl": "szympans"},
+      {"en": "cow", "pl": "krowa"},
+      {"en": "crocodile", "pl": "krokodyl"},
+      {"en": "dolphin", "pl": "delfin"},
+      {"en": "donkey", "pl": "osioł"},
+      {"en": "duck", "pl": "kaczka"},
+      {"en": "elephant", "pl": "słoń"},
+      {"en": "flamingo", "pl": "flaming"},
+      {"en": "fly", "pl": "mucha"},
+      {"en": "giraffe", "pl": "żyrafa"},
+      {"en": "kangaroo", "pl": "kangur"},
+      {"en": "kitten", "pl": "kocię, kociak"},
+      {"en": "lion", "pl": "lew"},
+      {"en": "monkey", "pl": "małpa"},
+      {"en": "parrot", "pl": "papuga"},
+      {"en": "penguin", "pl": "pingwin"},
+      {"en": "polar bear", "pl": "niedźwiedź polarny"},
+      {"en": "rabbit", "pl": "królik"},
+      {"en": "sea otter", "pl": "wydra morska"},
+      {"en": "shark", "pl": "rekin"},
+      {"en": "sheep", "pl": "owca"},
+      {"en": "snake", "pl": "wąż"},
+      {"en": "tiger", "pl": "tygrys"},
+      {"en": "tortoise", "pl": "żółw lądowy"},
+      {"en": "zebra", "pl": "zebra"},
+      {"en": "claw", "pl": "pazur"},
+      {"en": "feather", "pl": "pióro"},
+      {"en": "fur", "pl": "futro"},
+      {"en": "mouth", "pl": "pysk, paszcza"},
+      {"en": "skin", "pl": "skóra"},
+      {"en": "tail", "pl": "ogon"},
+      {"en": "wing", "pl": "skrzydło"},
+      {"en": "climb", "pl": "wspinać się"},
+      {"en": "cute", "pl": "uroczy"},
+      {"en": "dangerous", "pl": "niebezpieczny"},
+      {"en": "pet", "pl": "zwierzę domowe"},
+      {"en": "ride", "pl": "jeździć"},
+      {"en": "stripe", "pl": "pasek"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 3.2",
+    "sectionDescription": "",
+    "words": [
+      {"en": "aquarium", "pl": "akwarium, oceanarium"},
+      {"en": "pet shop", "pl": "sklep zoologiczny"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 3.3",
+    "sectionDescription": "Personality / Charakter",
+    "words": [
+      {"en": "adventurous", "pl": "lubiący przygody"},
+      {"en": "aggressive", "pl": "agresywny"},
+      {"en": "forgetful", "pl": "zapominalski"},
+      {"en": "impulsive", "pl": "impulsywny"},
+      {"en": "lovable", "pl": "uroczy, przemiły"},
+      {"en": "adolescent", "pl": "nastolatek"},
+      {"en": "adulthood", "pl": "dorosłość"},
+      {"en": "behave", "pl": "zachowywać się"},
+      {"en": "behaviour", "pl": "zachowanie"},
+      {"en": "belong to a gang", "pl": "należeć do gangu"},
+      {"en": "childhood", "pl": "dzieciństwo"},
+      {"en": "criticise", "pl": "krytykować"},
+      {"en": "do dangerous things", "pl": "robić niebezpieczne rzeczy"},
+      {"en": "energetic", "pl": "energiczny"},
+      {"en": "fight", "pl": "walczyć"},
+      {"en": "ignore advice", "pl": "ignorować rady"},
+      {"en": "lively", "pl": "pełen życia"},
+      {"en": "make a lot of noise", "pl": "robić dużo hałasu"},
+      {"en": "noisy", "pl": "hałaśliwy"},
+      {"en": "protect your home", "pl": "bronić swojego domu"},
+      {"en": "shy", "pl": "nieśmiały"},
+      {"en": "take risks", "pl": "podejmować ryzyko"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 3.4",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Calm down!", "pl": "Uspokój się!"},
+      {"en": "What's the matter?", "pl": "O co chodzi?"},
+      {"en": "What's wrong?", "pl": "Co się stało?"},
+      {"en": "(dog's) leash", "pl": "smycz (dla psa)"},
+      {"en": "hurry", "pl": "śpieszyć się"},
+      {"en": "look after a pet", "pl": "opiekować się zwierzęciem"},
+      {"en": "promise", "pl": "obiecać"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 3.5",
+    "sectionDescription": "",
+    "words": [
+      {"en": "be fun to play with", "pl": "fajnie się pobawić z"},
+      {"en": "brush a pet's fur", "pl": "czesać futro zwierzęcia"},
+      {"en": "clean", "pl": "czysty"},
+      {"en": "dirty", "pl": "brudny"},
+      {"en": "eat live animals", "pl": "jeść żywe zwierzęta"},
+      {"en": "empty a cat's litter tray", "pl": "opróżnić kocią kuwetę"},
+      {"en": "feed a pet", "pl": "karmić zwierzę"},
+      {"en": "give allergies", "pl": "spowodować alergię"},
+      {"en": "grow up", "pl": "dorosnąć"},
+      {"en": "quiet", "pl": "cichy"},
+      {"en": "scratch the furniture", "pl": "drapać meble"},
+      {"en": "take a dog for a walk", "pl": "zabrać psa na spacer"},
+      {"en": "take a pet to the vet's", "pl": "zabrać zwierzę do weterynarza"},
+      {"en": "train a pet", "pl": "wytresować zwierzę"},
+      {"en": "wash a pet", "pl": "umyć zwierzę"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 3.6",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "I'm so glad.", "pl": "Tak się cieszę!"},
+      {"en": "I've got to go now.", "pl": "Muszę już iść."},
+      {"en": "apologise", "pl": "przepraszać"},
+      {"en": "careless", "pl": "nieuważny, niedbały"},
+      {"en": "forgive", "pl": "przebaczyć"},
+      {"en": "miss sb/sth", "pl": "tęsknić za kimś/czymś"},
+      {"en": "rude", "pl": "niegrzeczny"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 3.7",
+    "sectionDescription": "",
+    "words": [
+      {"en": "animal documentary", "pl": "film dokumentalny o zwierzętach"},
+      {"en": "animal expert", "pl": "ekspert w dziedzinie zwierząt"},
+      {"en": "biography", "pl": "biografia"},
+      {"en": "career", "pl": "kariera"},
+      {"en": "die", "pl": "umrzeć"},
+      {"en": "discover", "pl": "odkryć"},
+      {"en": "famous (for something)", "pl": "znany (z czegoś)"},
+      {"en": "honeymoon", "pl": "miesiąc miodowy"},
+      {"en": "marry", "pl": "wyjść za mąż/ożenić się"},
+      {"en": "popular", "pl": "popularny"},
+      {"en": "success", "pl": "sukces"},
+      {"en": "TV presenter", "pl": "prezenter telewizji"},
+      {"en": "work on a book/film/TV programme", "pl": "pracować nad książką/filmem/programem telewizyjnym"},
+      {"en": "zoo", "pl": "zoo"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 4.1",
+    "sectionDescription": "Gadgets and technology / Gadżety i technologia",
+    "words": [
+      {"en": "CD player", "pl": "odtwarzacz płyt CD"},
+      {"en": "digital camera", "pl": "aparat cyfrowy"},
+      {"en": "DVD player", "pl": "odtwarzacz płyt DVD"},
+      {"en": "e-reader", "pl": "czytnik e-booków"},
+      {"en": "games console", "pl": "konsola do gier"},
+      {"en": "MP3 player", "pl": "odtwarzacz plików MP3"},
+      {"en": "battery", "pl": "bateria, akumulator"},
+      {"en": "joystick", "pl": "dżojstik"},
+      {"en": "keyboard", "pl": "klawiatura"},
+      {"en": "memory", "pl": "pamięć"},
+      {"en": "pen drive", "pl": "pendrive"},
+      {"en": "smartphone", "pl": "smartfon"},
+      {"en": "tablet", "pl": "tablet"},
+      {"en": "USB port", "pl": "złącze USB"},
+      {"en": "call/phone a friend", "pl": "zadzwonić do przyjaciela"},
+      {"en": "check emails / updates", "pl": "sprawdzać e-maile / powiadomienia"},
+      {"en": "collector", "pl": "kolekcjoner"},
+      {"en": "computer freak", "pl": "maniak komputerowy"},
+      {"en": "download files /videos", "pl": "ściągać pliki / klipy wideo z internetu"},
+      {"en": "electric", "pl": "elektryczny"},
+      {"en": "email address", "pl": "adres e-mail"},
+      {"en": "listen to music", "pl": "słuchać muzyki"},
+      {"en": "make videos / video clips", "pl": "nagrywać klipy wideo"},
+      {"en": "online", "pl": "w internecie, internetowe"},
+      {"en": "play games", "pl": "grać w gry"},
+      {"en": "plug in / into", "pl": "podłączyć do"},
+      {"en": "practical", "pl": "praktyczny"},
+      {"en": "send emails / instant messages", "pl": "wysyłać e-maile / wiadomości"},
+      {"en": "software", "pl": "oprogramowanie"},
+      {"en": "surf the internet", "pl": "surfować po internecie"},
+      {"en": "take photos", "pl": "robić zdjęcia"},
+      {"en": "technology", "pl": "technologia"},
+      {"en": "watch films", "pl": "oglądać filmy"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 4.2",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "I forgot to top up my phone.", "pl": "Zapomniałem doładować telefon."},
+      {"en": "It cost a fortune.", "pl": "To kosztowało fortunę."},
+      {"en": "app", "pl": "aplikacja na smartfona"},
+      {"en": "mobile phone", "pl": "telefon komórkowy"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 4.3",
+    "sectionDescription": "Phrasal verbs / Czasowniki złożone",
+    "words": [
+      {"en": "check out", "pl": "sprawdzić"},
+      {"en": "give up", "pl": "poddać się"},
+      {"en": "hang up", "pl": "rozłączyć się"},
+      {"en": "look for", "pl": "szukać czegoś"},
+      {"en": "switch off/on", "pl": "wyłączyć / włączyć"},
+      {"en": "blog", "pl": "blog"},
+      {"en": "cassette", "pl": "kaseta magnetofonowa"},
+      {"en": "cassette player", "pl": "magnetofon"},
+      {"en": "desktop computer", "pl": "komputer stacjonarny"},
+      {"en": "keep in touch", "pl": "być w kontakcie"},
+      {"en": "record", "pl": "płyta, nagranie"},
+      {"en": "record", "pl": "nagrywać"},
+      {"en": "text friends", "pl": "wysyłać SMS-y do przyjaciół"},
+      {"en": "unfortunately", "pl": "niestety"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 4.4",
+    "sectionDescription": "",
+    "words": [
+      {"en": "can't stand", "pl": "nie znosić"},
+      {"en": "charge a phone/battery", "pl": "naładować telefon / baterię"},
+      {"en": "die (e.g. a battery)", "pl": "rozładować się (o telefonie, baterii)"},
+      {"en": "don't/doesn't mind", "pl": "nie mieć nic przeciwko"},
+      {"en": "follow somebody (on Twitter)", "pl": "obserwować kogoś (na Twitterze)"},
+      {"en": "make phone calls", "pl": "dzwonić"},
+      {"en": "spend time online/offline", "pl": "spędzać czas w internecie / w świecie realnym"},
+      {"en": "waste time", "pl": "marnować czas"},
+      {"en": "write/receive texts", "pl": "pisać/otrzymywać SMS-y"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 4.5",
+    "sectionDescription": "",
+    "words": [
+      {"en": "website", "pl": "strona internetowa"},
+      {"en": "chat online", "pl": "rozmawiać na czacie internetowym"},
+      {"en": "click on links", "pl": "klikać w linki internetowe"},
+      {"en": "search the web", "pl": "przeszukiwać internet"},
+      {"en": "share files/videos", "pl": "dzielić się plikami / klipami wideo"},
+      {"en": "upload files/videos", "pl": "zamieszczać pliki / klipy wideo w internecie"},
+      {"en": "view videos", "pl": "oglądać klipy wideo"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 4.6",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Anyway....", "pl": "W każdym razie,"},
+      {"en": "Do you fancy coming?", "pl": "Czy masz ochotę przyjść?"},
+      {"en": "Give me a hand.", "pl": "Pomóż mi."},
+      {"en": "What's up?", "pl": "Co słychać?"},
+      {"en": "after that", "pl": "następnie"},
+      {"en": "at first", "pl": "na początku"},
+      {"en": "charger", "pl": "ładowarka"},
+      {"en": "crash (e.g. a computer)", "pl": "zawiesić się (np. o komputerze)"},
+      {"en": "finally", "pl": "w końcu"},
+      {"en": "first (of all)", "pl": "najpierw/przede wszystkim"},
+      {"en": "fix", "pl": "naprawić"},
+      {"en": "get a virus", "pl": "zarazić się wirusem"},
+      {"en": "go wrong", "pl": "pójść nie tak, popełnić błąd"},
+      {"en": "in the end", "pl": "w końcu"},
+      {"en": "internet connection", "pl": "połączenie internetowe"},
+      {"en": "later", "pl": "później"},
+      {"en": "next", "pl": "następnie"},
+      {"en": "professional", "pl": "profesjonalny"},
+      {"en": "stop working", "pl": "przestać działać"},
+      {"en": "successful", "pl": "udany"},
+      {"en": "suddenly", "pl": "nagle"},
+      {"en": "technical problems", "pl": "problemy techniczne"},
+      {"en": "then", "pl": "wtedy, potem"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 4.7",
+    "sectionDescription": "",
+    "words": [
+      {"en": "admire", "pl": "podziwiać"},
+      {"en": "electronic", "pl": "elektroniczny"},
+      {"en": "invent", "pl": "wynaleźć"},
+      {"en": "inventor", "pl": "wynalazca"},
+      {"en": "mouse", "pl": "myszka (komputerowa)"},
+      {"en": "robot", "pl": "robot"},
+      {"en": "scientist", "pl": "naukowiec"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 5.1",
+    "sectionDescription": "Rooms and things in the house / Pomieszczenia i przedmioty w domu",
+    "words": [
+      {"en": "armchair", "pl": "fotel"},
+      {"en": "bath", "pl": "wanna"},
+      {"en": "bathroom", "pl": "łazienka"},
+      {"en": "bed", "pl": "łóżko"},
+      {"en": "bedroom", "pl": "sypialnia"},
+      {"en": "bedside table", "pl": "stolik nocny"},
+      {"en": "bidet", "pl": "bidet"},
+      {"en": "ceiling", "pl": "sufit"},
+      {"en": "chair", "pl": "krzesło"},
+      {"en": "coffee table", "pl": "stolik do kawy"},
+      {"en": "cooker", "pl": "kuchenka"},
+      {"en": "cupboard", "pl": "szafka"},
+      {"en": "curtains", "pl": "zasłony"},
+      {"en": "desk", "pl": "biurko"},
+      {"en": "fireplace", "pl": "kominek"},
+      {"en": "floor", "pl": "podłoga"},
+      {"en": "fridge", "pl": "lodówka"},
+      {"en": "furniture", "pl": "meble"},
+      {"en": "kitchen", "pl": "kuchnia"},
+      {"en": "lamp", "pl": "lampa"},
+      {"en": "living room", "pl": "salon"},
+      {"en": "mirror", "pl": "lustro"},
+      {"en": "oven", "pl": "piekarnik"},
+      {"en": "room", "pl": "pokój"},
+      {"en": "rug", "pl": "dywanik"},
+      {"en": "shower", "pl": "prysznic"},
+      {"en": "sink", "pl": "zlew"},
+      {"en": "sofa", "pl": "sofa, kanapa"},
+      {"en": "switch", "pl": "przełącznik"},
+      {"en": "table", "pl": "stół"},
+      {"en": "tap", "pl": "kran"},
+      {"en": "toilet", "pl": "toaleta"},
+      {"en": "wall", "pl": "ściana"},
+      {"en": "wardrobe", "pl": "szafa"},
+      {"en": "washbasin", "pl": "umywalka"},
+      {"en": "window", "pl": "okno"},
+      {"en": "light", "pl": "światło, lampa"},
+      {"en": "spacious", "pl": "przestronny"},
+      {"en": "view", "pl": "widok"},
+      {"en": "above", "pl": "nad"},
+      {"en": "behind", "pl": "za"},
+      {"en": "between", "pl": "pomiędzy"},
+      {"en": "in", "pl": "w"},
+      {"en": "in front of", "pl": "przed"},
+      {"en": "near", "pl": "blisko"},
+      {"en": "next to", "pl": "obok"},
+      {"en": "on", "pl": "na"},
+      {"en": "opposite", "pl": "naprzeciwko"},
+      {"en": "under", "pl": "pod"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 5.2",
+    "sectionDescription": "Housework / Prace domowe",
+    "words": [
+      {"en": "clear the table", "pl": "posprzątać ze stołu"},
+      {"en": "do the cooking", "pl": "gotować"},
+      {"en": "do the housework", "pl": "wykonywać prace domowe"},
+      {"en": "do the ironing", "pl": "prasować"},
+      {"en": "do the shopping", "pl": "robić zakupy"},
+      {"en": "dry the dishes", "pl": "wytrzeć naczynia"},
+      {"en": "load the dishwasher / washing machine", "pl": "załadować zmywarkę / pralkę"},
+      {"en": "make your bed", "pl": "pościelić łóżko"},
+      {"en": "set the table", "pl": "nakryć do stołu"},
+      {"en": "sweep the floor", "pl": "zamieść podłogę"},
+      {"en": "take the rubbish out", "pl": "wynieść śmieci"},
+      {"en": "tidy your room", "pl": "posprzątać w pokoju"},
+      {"en": "vacuum the floor", "pl": "odkurzyć podłogę"},
+      {"en": "wash the dishes", "pl": "pozmywać naczynia"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 5.3",
+    "sectionDescription": "Adjectives to describe a house / Przymiotniki opisujące dom",
+    "words": [
+      {"en": "bright", "pl": "jasny"},
+      {"en": "cosy", "pl": "przytulny"},
+      {"en": "dark", "pl": "ciemny"},
+      {"en": "large", "pl": "wielki"},
+      {"en": "messy", "pl": "zabałaganiony"},
+      {"en": "modern", "pl": "nowoczesny"},
+      {"en": "narrow", "pl": "wąski"},
+      {"en": "old-fashioned", "pl": "staroświecki"},
+      {"en": "round", "pl": "okrągły"},
+      {"en": "small", "pl": "mały"},
+      {"en": "tidy", "pl": "schludny"},
+      {"en": "uncomfortable", "pl": "niewygodny"},
+      {"en": "wide", "pl": "szeroki"},
+      {"en": "attic", "pl": "strych"},
+      {"en": "carpet", "pl": "dywan"},
+      {"en": "chimney", "pl": "komin"},
+      {"en": "garden", "pl": "ogród"},
+      {"en": "hall", "pl": "przedpokój, korytarz"},
+      {"en": "roof", "pl": "dach"},
+      {"en": "upstairs", "pl": "na górze"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 5.4",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Cool!", "pl": "Fajnie!"},
+      {"en": "It's not fair!", "pl": "To niesprawiedliwe!"},
+      {"en": "You're lucky!", "pl": "Szczęściarz z ciebie!"},
+      {"en": "stay out late", "pl": "przebywać do późna poza domem"},
+      {"en": "stay up late", "pl": "kłaść się późno spać"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 5.5",
+    "sectionDescription": "Places in town / Miejsca w mieście",
+    "words": [
+      {"en": "art gallery", "pl": "galeria sztuki"},
+      {"en": "café", "pl": "kawiarnia"},
+      {"en": "castle", "pl": "zamek"},
+      {"en": "church", "pl": "kościół"},
+      {"en": "cinema", "pl": "kino"},
+      {"en": "estate", "pl": "posiadłość"},
+      {"en": "hotel", "pl": "hotel"},
+      {"en": "library", "pl": "biblioteka"},
+      {"en": "museum", "pl": "muzeum"},
+      {"en": "park", "pl": "park"},
+      {"en": "police station", "pl": "komisariat policji"},
+      {"en": "post office", "pl": "poczta"},
+      {"en": "shopping centre", "pl": "centrum handlowe"},
+      {"en": "station", "pl": "stacja"},
+      {"en": "tourist information centre", "pl": "biuro informacji turystycznej"},
+      {"en": "town hall", "pl": "ratusz"},
+      {"en": "building", "pl": "budynek"},
+      {"en": "capital city", "pl": "stolica"},
+      {"en": "city", "pl": "miasto"},
+      {"en": "countryside", "pl": "wieś"},
+      {"en": "public transport", "pl": "transport publiczny"},
+      {"en": "town", "pl": "miasteczko"},
+      {"en": "town centre", "pl": "centrum miasta"},
+      {"en": "traffic", "pl": "ruch uliczny"},
+      {"en": "village", "pl": "wioska"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 5.6",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "You're kidding, right?", "pl": "Żartujesz, prawda?"},
+      {"en": "It's a good place to hang out.", "pl": "To dobre miejsce na spotkanie."},
+      {"en": "canal", "pl": "kanał"},
+      {"en": "neighbour", "pl": "sąsiad"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 5.7",
+    "sectionDescription": "",
+    "words": [
+      {"en": "flat", "pl": "mieszkanie"},
+      {"en": "live next door", "pl": "mieszkać po sąsiedzku"},
+      {"en": "move to a new flat/house/town", "pl": "przeprowadzić się do nowego mieszkania / domu / miasta"},
+      {"en": "street", "pl": "ulica"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 6.1",
+    "sectionDescription": "Parts of the body / Części ciała",
+    "words": [
+      {"en": "ankle", "pl": "kostka"},
+      {"en": "arm", "pl": "ramię"},
+      {"en": "back", "pl": "plecy"},
+      {"en": "beard", "pl": "broda"},
+      {"en": "bone", "pl": "kość"},
+      {"en": "brain", "pl": "mózg"},
+      {"en": "ear", "pl": "ucho"},
+      {"en": "elbow", "pl": "łokieć"},
+      {"en": "eye", "pl": "oko"},
+      {"en": "eyebrow", "pl": "brew"},
+      {"en": "finger", "pl": "palec (u ręki)"},
+      {"en": "foot/feet", "pl": "stopa/stopy"},
+      {"en": "hair", "pl": "włosy"},
+      {"en": "hand", "pl": "ręka, dłoń"},
+      {"en": "head", "pl": "głowa"},
+      {"en": "heart", "pl": "serce"},
+      {"en": "knee", "pl": "kolano"},
+      {"en": "leg", "pl": "noga"},
+      {"en": "lips", "pl": "usta, wargi"},
+      {"en": "mouth", "pl": "usta, buzia"},
+      {"en": "muscle", "pl": "mięsień"},
+      {"en": "neck", "pl": "szyja"},
+      {"en": "nose", "pl": "nos"},
+      {"en": "shoulder", "pl": "ramię"},
+      {"en": "skin", "pl": "skóra"},
+      {"en": "stomach", "pl": "żołądek"},
+      {"en": "toe", "pl": "palec (u nogi)"},
+      {"en": "tooth/teeth", "pl": "ząb/zęby"},
+      {"en": "break your arm/leg", "pl": "złamać rękę/nogę"},
+      {"en": "burn", "pl": "oparzyć się"},
+      {"en": "calorie", "pl": "kaloria"},
+      {"en": "cut your knee/finger", "pl": "skaleczyć się w kolano/palec"},
+      {"en": "do exercises", "pl": "wykonywać ćwiczenia, ćwiczyć"},
+      {"en": "do weight training", "pl": "podnosić ciężary"},
+      {"en": "do yoga/Tai Chi", "pl": "uprawiać jogę/tai chi"},
+      {"en": "go running/cycling/swimming", "pl": "iść pobiegać/pojeździć na rowerze/popływać"},
+      {"en": "go to the gym", "pl": "chodzić na siłownię"},
+      {"en": "have fitness classes/PE lessons", "pl": "mieć zajęcia fitness/wychowania fizycznego"},
+      {"en": "hurt your hand/back", "pl": "zranić się w rękę/plecy"},
+      {"en": "keep fit", "pl": "utrzymywać dobrą kondycję"},
+      {"en": "play rugby/football/basketball/tennis", "pl": "grać w rugby/piłkę nożną/koszykówkę/tenisa"},
+      {"en": "train", "pl": "trenować"},
+      {"en": "twist your ankle/leg", "pl": "skręcić kostkę/nogę"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 6.2",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Help yourself.", "pl": "Poczęstuj się."},
+      {"en": "I'm starving!", "pl": "Umieram z głodu!"},
+      {"en": "cake", "pl": "ciasto"},
+      {"en": "chocolate bar", "pl": "batonik czekoladowy"},
+      {"en": "crisps", "pl": "czipsy"},
+      {"en": "fruit", "pl": "owoce"},
+      {"en": "hamburger", "pl": "hamburger"},
+      {"en": "hot dog", "pl": "hot dog"},
+      {"en": "nuts", "pl": "orzechy"},
+      {"en": "salad", "pl": "sałatka"},
+      {"en": "sandwich", "pl": "kanapka"},
+      {"en": "soup", "pl": "zupa"},
+      {"en": "delicious", "pl": "smaczny, pyszny"},
+      {"en": "fruit juice", "pl": "sok owocowy"},
+      {"en": "healthy", "pl": "zdrowy"},
+      {"en": "meat", "pl": "mięso"},
+      {"en": "menu", "pl": "menu"},
+      {"en": "salt", "pl": "sól"},
+      {"en": "sugar", "pl": "cukier"},
+      {"en": "sweets", "pl": "słodycze"},
+      {"en": "tea", "pl": "herbata"},
+      {"en": "vegetable", "pl": "warzywo"},
+      {"en": "vegetarian", "pl": "wegetariański"},
+      {"en": "water", "pl": "woda"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 6.3",
+    "sectionDescription": "",
+    "words": [
+      {"en": "fall asleep", "pl": "zasnąć"},
+      {"en": "feel ill/sick", "pl": "czuć się chorym"},
+      {"en": "feel terrible/tired", "pl": "czuć się źle/zmęczonym"},
+      {"en": "get ready for bed", "pl": "szykować się do snu"},
+      {"en": "get up early/late", "pl": "wstawać wcześnie/późno"},
+      {"en": "go to bed/sleep", "pl": "iść do łóżka/spać"},
+      {"en": "have a dream", "pl": "mieć sen, śnić"},
+      {"en": "sleep easily/well/badly", "pl": "zasypiać z łatwością/dobrze/źle sypiać"},
+      {"en": "sleepy", "pl": "senny"},
+      {"en": "stay in bed late", "pl": "wylegiwać się, późno wstawać"},
+      {"en": "stay up late", "pl": "późno chodzić spać"},
+      {"en": "wake up early/late", "pl": "budzić się wcześnie/późno"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 6.4",
+    "sectionDescription": "",
+    "words": [
+      {"en": "accident", "pl": "wypadek"},
+      {"en": "pay attention to sth", "pl": "zwracać uwagę na coś"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 6.5",
+    "sectionDescription": "Symptoms and illnesses / Choroby i ich objawy",
+    "words": [
+      {"en": "(food) allergy", "pl": "alergia (pokarmowa)"},
+      {"en": "cold", "pl": "przeziębienie"},
+      {"en": "cough", "pl": "kaszel, kasłać"},
+      {"en": "hay fever", "pl": "katar sienny"},
+      {"en": "headache", "pl": "ból głowy"},
+      {"en": "high temperature", "pl": "wysoka temperatura"},
+      {"en": "sneeze", "pl": "mieć katar, kichać"},
+      {"en": "sore throat", "pl": "ból gardła"},
+      {"en": "stomachache", "pl": "ból brzucha"},
+      {"en": "the flu", "pl": "grypa"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 6.6",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "I see.", "pl": "Rozumiem."},
+      {"en": "Just the usual.", "pl": "To, co zwykle."},
+      {"en": "aspirin", "pl": "aspiryna"},
+      {"en": "doctor's appointment", "pl": "wizyta u lekarza"},
+      {"en": "health", "pl": "zdrowie"},
+      {"en": "illness", "pl": "choroba"},
+      {"en": "make an appointment with the doctor", "pl": "umówić wizytę u lekarza"},
+      {"en": "medicine", "pl": "leki"},
+      {"en": "tablet", "pl": "tabletka"},
+      {"en": "toothache", "pl": "ból zęba"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 6.7",
+    "sectionDescription": "",
+    "words": [
+      {"en": "check out", "pl": "sprawdzić"},
+      {"en": "fall out", "pl": "pokłócić się"},
+      {"en": "find out", "pl": "dowiedzieć się"},
+      {"en": "get on with sb", "pl": "dobrze się z kimś rozumieć"},
+      {"en": "give up", "pl": "przestać coś robić, poddać się"},
+      {"en": "go off", "pl": "zepsuć się (np. o jedzeniu)"},
+      {"en": "go on", "pl": "dziać się"},
+      {"en": "hang out", "pl": "spędzać z kimś czas"},
+      {"en": "look after", "pl": "opiekować się"},
+      {"en": "pick up (illness)", "pl": "złapać (chorobę)"},
+      {"en": "take up", "pl": "zacząć uprawiać (sport)"},
+      {"en": "top up", "pl": "doładować telefon"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 7.1",
+    "sectionDescription": "Types of shops / Rodzaje sklepów",
+    "words": [
+      {"en": "bakery", "pl": "piekarnia"},
+      {"en": "bookshop", "pl": "księgarnia"},
+      {"en": "butcher's", "pl": "sklep mięsny"},
+      {"en": "clothes shop", "pl": "sklep odzieżowy"},
+      {"en": "florist's", "pl": "kwiaciarnia"},
+      {"en": "greengrocer's", "pl": "sklep z warzywami"},
+      {"en": "newsagent's", "pl": "kiosk"},
+      {"en": "pharmacy", "pl": "apteka"},
+      {"en": "shoe shop", "pl": "sklep obuwniczy"},
+      {"en": "a bag of apples/sugar", "pl": "torebka jabłek/cukru"},
+      {"en": "a bar of chocolate", "pl": "tabliczka czekolady"},
+      {"en": "a bottle of shampoo/water", "pl": "butelka szamponu/wody"},
+      {"en": "a box of cream cakes/matches", "pl": "pudełko ciastek z kremem/zapałek"},
+      {"en": "a bunch of flowers", "pl": "bukiet kwiatów"},
+      {"en": "a can of cola/lemonade", "pl": "puszka coli/lemoniady"},
+      {"en": "a jar of jam/coffee", "pl": "słoik dżemu/kawy"},
+      {"en": "a loaf of bread", "pl": "bochenek chleba"},
+      {"en": "a packet of crisps/biscuits", "pl": "paczka czipsów/herbatników"},
+      {"en": "busy", "pl": "zajęty"},
+      {"en": "buy", "pl": "kupować"},
+      {"en": "closed", "pl": "zamknięty"},
+      {"en": "neighbourhood", "pl": "sąsiedztwo, okolica"},
+      {"en": "sell", "pl": "sprzedawać"},
+      {"en": "shopping", "pl": "robienie zakupów"},
+      {"en": "shopping list", "pl": "lista zakupów"},
+      {"en": "special offer", "pl": "oferta specjalna"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 7.2",
+    "sectionDescription": "",
+    "words": [
+      {"en": "cheap", "pl": "tani"},
+      {"en": "comfortable", "pl": "wygodny"},
+      {"en": "enjoyable", "pl": "przyjemny, miły"},
+      {"en": "expensive", "pl": "drogi, kosztowny"},
+      {"en": "headphones", "pl": "słuchawki"},
+      {"en": "heavy", "pl": "ciężki"},
+      {"en": "journey", "pl": "podróż"},
+      {"en": "light", "pl": "lekki"},
+      {"en": "low", "pl": "niski"},
+      {"en": "mistake", "pl": "błąd"},
+      {"en": "modern", "pl": "nowoczesny"},
+      {"en": "opinion", "pl": "opinia"},
+      {"en": "pocket", "pl": "kieszeń"},
+      {"en": "quality", "pl": "jakość"},
+      {"en": "shop assistant", "pl": "sprzedawca w sklepie"},
+      {"en": "sound", "pl": "brzmieć, dźwięk"},
+      {"en": "supermarket", "pl": "supermarket"},
+      {"en": "trendy", "pl": "modny"},
+      {"en": "uncomfortable", "pl": "niewygodny"},
+      {"en": "waste of money", "pl": "strata pieniędzy"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 7.3",
+    "sectionDescription": "Shopping centres / Centra handlowe",
+    "words": [
+      {"en": "car park", "pl": "parking"},
+      {"en": "department store", "pl": "dom handlowy"},
+      {"en": "escalator", "pl": "ruchome schody"},
+      {"en": "food court", "pl": "część restauracyjna w centrum handlowym"},
+      {"en": "multi-screen cinema", "pl": "multikino"},
+      {"en": "public toilets", "pl": "toalety publiczne"},
+      {"en": "shopper", "pl": "osoba robiąca zakupy"},
+      {"en": "trolley", "pl": "wózek sklepowy"},
+      {"en": "exit", "pl": "wyjście"},
+      {"en": "invention", "pl": "wynalazek"},
+      {"en": "level", "pl": "poziom"},
+      {"en": "out-of-town", "pl": "podmiejski"},
+      {"en": "popular", "pl": "popularny"},
+      {"en": "surprise", "pl": "niespodzianka"},
+      {"en": "traditional", "pl": "tradycyjny"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 7.4",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "It's a surprise.", "pl": "To niespodzianka."},
+      {"en": "Thanks for telling me!", "pl": "Dziękuję, że mi powiedziałeś!"},
+      {"en": "do some shopping", "pl": "robić zakupy"},
+      {"en": "get sb a present", "pl": "kupić komuś prezent"},
+      {"en": "go for a pizza", "pl": "iść na pizzę"},
+      {"en": "go ice-skating", "pl": "iść na lodowisko"},
+      {"en": "show a film", "pl": "pokazywać film"},
+      {"en": "take a train", "pl": "pojechać pociągiem"},
+      {"en": "voicemail message", "pl": "wiadomość na poczcie głosowej"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 7.5",
+    "sectionDescription": "Money / Pieniądze",
+    "words": [
+      {"en": "change", "pl": "drobne, reszta"},
+      {"en": "piggy bank", "pl": "skarbonka"},
+      {"en": "pocket money", "pl": "kieszonkowe"},
+      {"en": "price", "pl": "cena"},
+      {"en": "purse", "pl": "portmonetka"},
+      {"en": "sales", "pl": "wyprzedaże"},
+      {"en": "wallet", "pl": "portfel"},
+      {"en": "earn money", "pl": "zarabiać pieniądze"},
+      {"en": "borrow money from sb", "pl": "pożyczyć pieniądze od kogoś"},
+      {"en": "get pocket money", "pl": "dostawać kieszonkowe"},
+      {"en": "go shopping", "pl": "iść na zakupy"},
+      {"en": "lend money to sb/lend sb money", "pl": "pożyczyć komuś pieniądze"},
+      {"en": "make a list", "pl": "zrobić listę"},
+      {"en": "pay", "pl": "płacić"},
+      {"en": "pay (sb) back", "pl": "oddać komuś pieniądze"},
+      {"en": "save money", "pl": "oszczędzać pieniądze"},
+      {"en": "spend money", "pl": "wydawać pieniądze"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 7.6",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "I'm fed up!", "pl": "Mam dość!"},
+      {"en": "Just a second.", "pl": "Chwileczkę."},
+      {"en": "a good/high/low price", "pl": "dobra/wysoka/niska cena"},
+      {"en": "changing rooms", "pl": "przymierzalnie"},
+      {"en": "on sale", "pl": "na wyprzedaży"},
+      {"en": "size", "pl": "rozmiar"},
+      {"en": "try on", "pl": "przymierzać"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 7.7",
+    "sectionDescription": "",
+    "words": [
+      {"en": "give information", "pl": "podawać informacje"},
+      {"en": "invitation", "pl": "zaproszenie"},
+      {"en": "invite friends to your house", "pl": "zaprosić przyjaciół do domu"},
+      {"en": "leave a message", "pl": "zostawić wiadomość"},
+      {"en": "music shop", "pl": "sklep muzyczny"},
+      {"en": "note", "pl": "notatka"},
+      {"en": "organise a surprise party", "pl": "organizować przyjęcie-niespodziankę"},
+      {"en": "reply", "pl": "odpowiedź, odpowiedzieć"},
+      {"en": "update", "pl": "uaktualnienie"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 8.1",
+    "sectionDescription": "Jobs / Zawody",
+    "words": [
+      {"en": "accountant", "pl": "księgowy/księgowa"},
+      {"en": "architect", "pl": "architekt"},
+      {"en": "artist", "pl": "artysta/artystka"},
+      {"en": "bike courier", "pl": "kurier rowerowy"},
+      {"en": "builder", "pl": "pracownik budowlany"},
+      {"en": "chef", "pl": "szef kuchni"},
+      {"en": "doctor", "pl": "lekarz/lekarka"},
+      {"en": "driver", "pl": "kierowca"},
+      {"en": "electrician", "pl": "elektryk"},
+      {"en": "farmer", "pl": "rolnik"},
+      {"en": "firefighter", "pl": "strażak"},
+      {"en": "gardener", "pl": "ogrodnik/ogrodniczka"},
+      {"en": "hairdresser", "pl": "fryzjer/fryzjerka"},
+      {"en": "IT specialist", "pl": "specjalista/specjalistka IT"},
+      {"en": "journalist", "pl": "dziennikarz/dziennikarka"},
+      {"en": "lawyer", "pl": "prawnik/prawniczka"},
+      {"en": "mechanic", "pl": "mechanik"},
+      {"en": "nurse", "pl": "pielęgniarz/pielęgniarka"},
+      {"en": "pilot", "pl": "pilot"},
+      {"en": "police officer", "pl": "policjant/policjantka"},
+      {"en": "politician", "pl": "polityk"},
+      {"en": "postman/postwoman", "pl": "listonosz/listonoszka"},
+      {"en": "receptionist", "pl": "recepcjonista/recepcjonistka"},
+      {"en": "secretary", "pl": "sekretarz/sekretarka"},
+      {"en": "shop/sales assistant", "pl": "sprzedawca/sprzedawczyni w sklepie"},
+      {"en": "soldier", "pl": "żołnierz"},
+      {"en": "tour guide", "pl": "przewodnik/przewodniczka"},
+      {"en": "waiter/waitress", "pl": "kelner/kelnerka"},
+      {"en": "be happy at work", "pl": "być zadowolonym z pracy"},
+      {"en": "challenging", "pl": "wymagający"},
+      {"en": "creative", "pl": "kreatywny"},
+      {"en": "dangerous", "pl": "niebezpieczny"},
+      {"en": "earn (good) money", "pl": "dobrze zarabiać"},
+      {"en": "get to work on time", "pl": "przychodzić punktualnie do pracy"},
+      {"en": "stressful", "pl": "stresujący"},
+      {"en": "wear a uniform", "pl": "nosić mundur"},
+      {"en": "well/best paid", "pl": "dobrze/najlepiej płatna"},
+      {"en": "work at the weekend", "pl": "pracować w weekend"},
+      {"en": "work from nine to five", "pl": "mieć regularne godziny pracy, pracować od dziewiątej do piątej"},
+      {"en": "work in a team/alone", "pl": "pracować w zespole/samemu"},
+      {"en": "work indoors/outdoors", "pl": "pracować wewnątrz/na zewnątrz"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 8.2",
+    "sectionDescription": "",
+    "words": [
+      {"en": "school uniform", "pl": "mundurek szkolny"},
+      {"en": "timetable", "pl": "rozkład zajęć"},
+      {"en": "translate", "pl": "tłumaczyć"},
+      {"en": "unpleasant", "pl": "nieprzyjemny"},
+      {"en": "work/study abroad", "pl": "pracować/studiować za granicą"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 8.3",
+    "sectionDescription": "",
+    "words": [
+      {"en": "full-time job", "pl": "praca na pełen etat"},
+      {"en": "get/have/lose a job", "pl": "dostać/mieć/stracić pracę"},
+      {"en": "look for a job", "pl": "szukać pracy"},
+      {"en": "part-time job", "pl": "praca na pół etatu"},
+      {"en": "summer job", "pl": "praca sezonowa/na lato"},
+      {"en": "temporary job", "pl": "praca tymczasowa"},
+      {"en": "unemployed", "pl": "bezrobotny"},
+      {"en": "work as a waitress", "pl": "pracować jako kelnerka"},
+      {"en": "work for a company", "pl": "pracować dla firmy"},
+      {"en": "work in an office", "pl": "pracować w biurze"},
+      {"en": "babysitter", "pl": "opiekunka do dziecka"},
+      {"en": "call centre", "pl": "telefoniczne centrum obsługi klienta"},
+      {"en": "lifeguard", "pl": "ratownik"},
+      {"en": "ordinary", "pl": "zwyczajny"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 8.4",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "I get the message!", "pl": "Rozumiem, co chcesz powiedzieć!"},
+      {"en": "It's as simple as that!", "pl": "To naprawdę proste!"},
+      {"en": "cheat in a test", "pl": "ściągać na teście"},
+      {"en": "get a good/bad mark", "pl": "dostać dobrą/złą ocenę"},
+      {"en": "get the results of a test", "pl": "otrzymać wyniki testu"},
+      {"en": "have/take a test/an exam", "pl": "mieć/podejść do testu/egzaminu"},
+      {"en": "pass/fail an exam", "pl": "zdać egzamin/nie zdać egzaminu"},
+      {"en": "repeat", "pl": "powtarzać (np. klasę)"},
+      {"en": "revision", "pl": "powtórka materiału"},
+      {"en": "study", "pl": "uczyć się"},
+      {"en": "revise for a test/an exam", "pl": "powtarzać materiał przed testem/egzaminem"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 8.5",
+    "sectionDescription": "School and education / Szkoła i edukacja",
+    "words": [
+      {"en": "classmate", "pl": "kolega/koleżanka z klasy"},
+      {"en": "cloakroom", "pl": "szatnia"},
+      {"en": "college", "pl": "szkoła wyższa, uniwersytet"},
+      {"en": "form tutor", "pl": "wychowawca klasy"},
+      {"en": "gymnasium", "pl": "sala gimnastyczna"},
+      {"en": "head teacher", "pl": "dyrektor szkoły"},
+      {"en": "library", "pl": "biblioteka"},
+      {"en": "make notes", "pl": "robić notatki"},
+      {"en": "Maths/English teacher", "pl": "nauczyciel matematyki/języka angielskiego"},
+      {"en": "playground", "pl": "plac zabaw, boisko szkolne"},
+      {"en": "primary school", "pl": "szkoła podstawowa"},
+      {"en": "pupil", "pl": "uczeń/uczennica"},
+      {"en": "science lab", "pl": "pracownia naukowa"},
+      {"en": "secondary school", "pl": "szkoła średnia"},
+      {"en": "sports field", "pl": "boisko sportowe"},
+      {"en": "staff room", "pl": "pokój nauczycielski"},
+      {"en": "subject", "pl": "przedmiot szkolny"},
+      {"en": "university", "pl": "uniwersytet"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 8.6",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Fingers crossed!", "pl": "Trzymam kciuki!"},
+      {"en": "Gosh!", "pl": "Ojej!"},
+      {"en": "What a nightmare!", "pl": "Co za koszmar!"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 8.7",
+    "sectionDescription": "",
+    "words": [
+      {"en": "be bad/hopeless at", "pl": "być kiepskim/beznadziejnym z czegoś"},
+      {"en": "be afraid of", "pl": "obawiać się czegoś"},
+      {"en": "be crazy about", "pl": "szaleć na punkcie czegoś"},
+      {"en": "be fond of", "pl": "lubić coś, mieć do czegoś słabość"},
+      {"en": "be good/brilliant at", "pl": "być dobrym/świetnym z czegoś"},
+      {"en": "be keen on", "pl": "bardzo coś lubić"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 9.1",
+    "sectionDescription": "Landscape and natural features / Krajobraz i rzeźba terenu",
+    "words": [
+      {"en": "beach", "pl": "plaża"},
+      {"en": "cliff", "pl": "klif"},
+      {"en": "coast", "pl": "wybrzeże"},
+      {"en": "desert", "pl": "pustynia"},
+      {"en": "field", "pl": "pole"},
+      {"en": "forest", "pl": "las"},
+      {"en": "island", "pl": "wyspa"},
+      {"en": "jungle", "pl": "dżungla"},
+      {"en": "lake", "pl": "jezioro"},
+      {"en": "mountain", "pl": "góra"},
+      {"en": "ocean", "pl": "ocean"},
+      {"en": "rainforest", "pl": "las deszczowy"},
+      {"en": "river", "pl": "rzeka"},
+      {"en": "rocks", "pl": "skały"},
+      {"en": "sea", "pl": "morze"},
+      {"en": "volcano", "pl": "wulkan"},
+      {"en": "waterfall", "pl": "wodospad"},
+      {"en": "border", "pl": "granica"},
+      {"en": "capital city", "pl": "stolica"},
+      {"en": "country", "pl": "państwo"},
+      {"en": "flag", "pl": "flaga"},
+      {"en": "official language", "pl": "język urzędowy"},
+      {"en": "population", "pl": "populacja"},
+      {"en": "by a lake / a river / the sea", "pl": "nad jeziorem/rzeką/morzem"},
+      {"en": "Earth", "pl": "Ziemia (planeta)"},
+      {"en": "hometown", "pl": "miasto rodzinne"},
+      {"en": "in a forest/a field/the mountains/the sea", "pl": "w lesie/na polu/w górach/w morzu"},
+      {"en": "on a beach / an island / the coast", "pl": "na plaży/wyspie/wybrzeżu"},
+      {"en": "place", "pl": "miejsce"},
+      {"en": "sand", "pl": "piasek"},
+      {"en": "sunbathe", "pl": "opalać się"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 9.2",
+    "sectionDescription": "",
+    "words": [
+      {"en": "climb a mountain", "pl": "wspiąć się na górę"},
+      {"en": "fly in a plane", "pl": "lecieć samolotem"},
+      {"en": "go on holiday", "pl": "jechać na urlop"},
+      {"en": "have a good / bad holiday", "pl": "mieć udane/nieudane wakacje"},
+      {"en": "travel", "pl": "podróżować"},
+      {"en": "visa", "pl": "wiza"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 9.3",
+    "sectionDescription": "Phrasal verbs / Czasowniki złożone",
+    "words": [
+      {"en": "blow up", "pl": "wybuchnąć"},
+      {"en": "come across", "pl": "natknąć się na coś"},
+      {"en": "find out", "pl": "dowiedzieć się"},
+      {"en": "give up", "pl": "poddać się"},
+      {"en": "go back", "pl": "wrócić"},
+      {"en": "adventure", "pl": "przygoda"},
+      {"en": "alone", "pl": "samotnie"},
+      {"en": "boat", "pl": "łódź"},
+      {"en": "civilisation", "pl": "cywilizacja"},
+      {"en": "cut", "pl": "rana cięta, skaleczenie"},
+      {"en": "dead", "pl": "martwy"},
+      {"en": "earth", "pl": "ziemia, grunt"},
+      {"en": "faint", "pl": "zemdleć"},
+      {"en": "happy ending", "pl": "szczęśliwe zakończenie"},
+      {"en": "passenger", "pl": "pasażer"},
+      {"en": "pilot", "pl": "pilot"},
+      {"en": "plane", "pl": "samolot"},
+      {"en": "sky", "pl": "niebo"},
+      {"en": "storm", "pl": "burza"},
+      {"en": "survive", "pl": "przeżyć"},
+      {"en": "take place", "pl": "odbywać się"},
+      {"en": "true story", "pl": "prawdziwa historia"},
+      {"en": "warm", "pl": "ciepły"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 9.4",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Give me a break!", "pl": "Przestań się czepiać!"},
+      {"en": "Great!", "pl": "Znakomicie!"},
+      {"en": "catch a bus/train", "pl": "złapać autobus / pociąg"},
+      {"en": "check a timetable", "pl": "sprawdzić rozkład jazdy"},
+      {"en": "get off a bus/train", "pl": "wysiąść z autobusu / pociągu"},
+      {"en": "miss a bus/train", "pl": "spóźnić się na autobus/pociąg"},
+      {"en": "pack a rucksack", "pl": "pakować plecak"},
+      {"en": "pick sb up", "pl": "odebrać kogoś"},
+      {"en": "tent", "pl": "namiot"},
+      {"en": "train ticket", "pl": "bilet na pociąg"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 9.5",
+    "sectionDescription": "Outdoor activities / Aktywności na świeżym powietrzu",
+    "words": [
+      {"en": "cycling", "pl": "jazda na rowerze"},
+      {"en": "fishing", "pl": "łowienie ryb"},
+      {"en": "hiking", "pl": "wędrowanie"},
+      {"en": "kayaking", "pl": "pływanie kajakiem"},
+      {"en": "mountain biking", "pl": "jazda rowerem górskim"},
+      {"en": "pony trekking", "pl": "wakacje w siodle"},
+      {"en": "rock climbing", "pl": "wspinaczka skałkowa"},
+      {"en": "scuba diving", "pl": "nurkowanie z akwalungiem"},
+      {"en": "skiing", "pl": "jazda na nartach"},
+      {"en": "snowboarding", "pl": "snowboarding"},
+      {"en": "surfing", "pl": "surfing"},
+      {"en": "swimming", "pl": "pływanie"},
+      {"en": "windsurfing", "pl": "windsurfing"},
+      {"en": "boots", "pl": "buty do wędrówek"},
+      {"en": "compass", "pl": "kompas"},
+      {"en": "gloves", "pl": "rękawice"},
+      {"en": "goggles", "pl": "gogle"},
+      {"en": "helmet", "pl": "hełm"},
+      {"en": "kayak", "pl": "kajak"},
+      {"en": "life jacket", "pl": "kamizelka ratunkowa"},
+      {"en": "map", "pl": "mapa"},
+      {"en": "paddle", "pl": "wiosło"},
+      {"en": "snowboard", "pl": "snowboard"},
+      {"en": "surfboard", "pl": "deska surfingowa"},
+      {"en": "wetsuit", "pl": "pianka do nurkowania"},
+      {"en": "float", "pl": "unosić się na wodzie"},
+      {"en": "get lost", "pl": "zgubić się"},
+      {"en": "go the wrong way", "pl": "pójść złą drogą"},
+      {"en": "land", "pl": "ląd"},
+      {"en": "mountain bike", "pl": "rower górski"},
+      {"en": "water", "pl": "woda"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 9.6",
+    "sectionDescription": "Out of class",
+    "words": [
+      {"en": "Can I ask a favour?", "pl": "Czy mógłbyś coś dla mnie zrobić?"},
+      {"en": "camp", "pl": "obóz"},
+      {"en": "dry", "pl": "wysuszyć"},
+      {"en": "farmhouse", "pl": "dom w gospodarstwie"},
+      {"en": "put up a tent", "pl": "rozbić namiot"},
+      {"en": "soaking", "pl": "przemoczony"}
+    ]
+  },
+  {
+    "sectionLabel": "KL. 7 - LESSON 9.7",
+    "sectionDescription": "",
+    "words": [
+      {"en": "amazing", "pl": "wspaniały"},
+      {"en": "buy a souvenir", "pl": "kupić pamiątkę"},
+      {"en": "gossip", "pl": "plotki"},
+      {"en": "have a good/great time", "pl": "dobrze/świetnie się bawić"},
+      {"en": "holiday", "pl": "wakacje, urlop"},
+      {"en": "make friends", "pl": "zaprzyjaźnić się"},
+      {"en": "receive/send/write a postcard", "pl": "otrzymać/wysłać/napisać pocztówkę"},
+      {"en": "ski poles", "pl": "kijki do nart"},
+      {"en": "skis", "pl": "narty"},
+      {"en": "swim in the sea", "pl": "pływać w morzu"},
+      {"en": "tourist resort", "pl": "kurort turystyczny"},
+      {"en": "watch the sunset", "pl": "oglądać zachód słońca"},
+      {"en": "weather", "pl": "pogoda"},
+      {"en": "wet", "pl": "mokry"},
+      {"en": "windy", "pl": "wietrznie"}
+    ]
+  }
         ];
 
-        // Synteza mowy
+        // Synteza mowy z odszukiwaniem angielskiego głosu
         function speakEnglish(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'en-US';
                 utterance.rate = 0.85;
+
+                // Wybieranie natywnego głosu angielskiego
+                const voices = window.speechSynthesis.getVoices();
+                const englishVoice = voices.find(v => v.lang.startsWith('en') || v.lang.includes('en-US') || v.lang.includes('en-GB'));
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        // Dźwięki
+        // Wczytywanie głosów w tle (dla mobilnego Chrome / Safari)
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+        }
+
+        // Efekty dźwiękowe
         function playCorrectSound() {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const notes = [880, 1108.73, 1318.51];
@@ -527,7 +3040,7 @@
             });
         }
 
-        // Algorytm Levenshteina
+        // Levenshtein Distance
         function getSimilarityRatio(str1, str2) {
             const s1 = str1.toLowerCase().replace(/[^a-z0-9]/g, '');
             const s2 = str2.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -554,33 +3067,49 @@
             return (maxLength - distance) / maxLength;
         }
 
-        // Stan aplikacji
+        // Zmienne stanu
+        let activeSectionIndex = 0;
         let activeSection = null;
+        let revealedCardsCount = 0;
+        
         let currentPool = [];
         let currentIndex = 0;
         let correctCount = 0;
         let isFirstAttempt = true;
 
-        // DOM
+        // Widoki
         const sectionsView = document.getElementById('sections-view');
-        const sectionsList = document.getElementById('sections-list');
+        const modeSelectView = document.getElementById('mode-select-view');
+        const learnView = document.getElementById('learn-view');
         const quizView = document.getElementById('quiz-view');
         const scoreView = document.getElementById('score-view');
-        
-        const progressBar = document.getElementById('progress-bar');
-        const scoreCountElem = document.getElementById('score-count');
+
+        // Elementy DOM
+        const sectionsList = document.getElementById('sections-list');
+        const modeLessonTitle = document.getElementById('mode-lesson-title');
+        const modeLessonDesc = document.getElementById('mode-lesson-desc');
+        const startLearnBtn = document.getElementById('start-learn-btn');
+        const startPracticeBtn = document.getElementById('start-practice-btn');
+
+        const wordsGrid = document.getElementById('words-grid');
+        const learnProgressBar = document.getElementById('learn-progress-bar');
+        const learnScoreCount = document.getElementById('learn-score-count');
+
+        const quizProgressBar = document.getElementById('quiz-progress-bar');
+        const quizScoreCount = document.getElementById('quiz-score-count');
         const lessonTitleElem = document.getElementById('lesson-title');
         const promptElem = document.getElementById('prompt-text');
         const hintText = document.getElementById('hint-text');
         const feedbackElem = document.getElementById('feedback');
         const micBtn = document.getElementById('mic-btn');
         const skipBtn = document.getElementById('skip-btn');
-        const exitBtn = document.getElementById('exit-btn');
+
         const scorePercentElem = document.getElementById('score-percent');
         const scoreDetailsElem = document.getElementById('score-details');
+        const scoreSubtitle = document.getElementById('score-subtitle');
         const restartBtn = document.getElementById('restart-btn');
 
-        // Recognition
+        // Rozpoznawanie mowy
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
 
@@ -611,9 +3140,11 @@
             };
         }
 
-        // Renderowanie listy sekcji
+        // 1. Ekran Wyboru Lekcji
         function renderSectionsScreen() {
             sectionsView.classList.remove('hidden');
+            modeSelectView.classList.add('hidden');
+            learnView.classList.add('hidden');
             quizView.classList.add('hidden');
             scoreView.classList.add('hidden');
 
@@ -626,35 +3157,98 @@
                     <div class="section-title">${sec.sectionDescription || 'Słówka i zwroty'}</div>
                     <div class="section-count">${sec.words.length} słówek w zestawie</div>
                 `;
-                btn.addEventListener('click', () => startQuizForSection(index));
+                btn.addEventListener('click', () => openModeSelect(index));
                 sectionsList.appendChild(btn);
             });
         }
 
-        function startQuizForSection(sectionIndex) {
-            activeSection = sectionsData[sectionIndex];
-            
-            // Losujemy maks 10 słówek z wybranej sekcji
+        // 2. Ekran Wyboru Trybu
+        function openModeSelect(index) {
+            activeSectionIndex = index;
+            activeSection = sectionsData[index];
+
+            modeLessonTitle.innerText = activeSection.sectionLabel;
+            modeLessonDesc.innerText = activeSection.sectionDescription || 'Słówka i zwroty';
+
+            sectionsView.classList.add('hidden');
+            modeSelectView.classList.remove('hidden');
+            learnView.classList.add('hidden');
+            quizView.classList.add('hidden');
+            scoreView.classList.add('hidden');
+        }
+
+        // 3. TRYB NAUKI (DWIE KOLUMNY)
+        function startLearnMode() {
+            revealedCardsCount = 0;
+            const totalWords = activeSection.words.length;
+
+            learnProgressBar.style.width = '0%';
+            learnScoreCount.innerText = `0/${totalWords}`;
+
+            wordsGrid.innerHTML = '';
+            activeSection.words.forEach((wordObj) => {
+                const row = document.createElement('div');
+                row.className = 'word-row';
+
+                // Kolumna PL
+                const plCard = document.createElement('div');
+                plCard.className = 'word-card pl-card';
+                plCard.innerText = wordObj.pl;
+
+                // Kolumna EN (zakryta)
+                const enCard = document.createElement('div');
+                enCard.className = 'word-card en-card-hidden';
+                enCard.innerText = '🔒';
+
+                enCard.addEventListener('click', () => {
+                    if (enCard.classList.contains('en-card-hidden')) {
+                        enCard.className = 'word-card en-card-revealed';
+                        enCard.innerText = wordObj.en;
+                        
+                        // ZMIANA 1: Brak dźwięku CorrectSound
+                        // ZMIANA 2: Odczytywanie natywnym angielskim głosem
+                        speakEnglish(wordObj.en);
+
+                        revealedCardsCount++;
+                        learnProgressBar.style.width = `${(revealedCardsCount / totalWords) * 100}%`;
+                        learnScoreCount.innerText = `${revealedCardsCount}/${totalWords}`;
+
+                        // ZMIANA 3: Brak automatycznego zamykania ekranu po odsłonięciu wszystkich kart
+                    } else {
+                        speakEnglish(wordObj.en);
+                    }
+                });
+
+                row.appendChild(plCard);
+                row.appendChild(enCard);
+                wordsGrid.appendChild(row);
+            });
+
+            modeSelectView.classList.add('hidden');
+            learnView.classList.remove('hidden');
+        }
+
+        // 4. TRYB PRAKTYKI (MÓWIENIE)
+        function startPracticeMode() {
             const shuffled = [...activeSection.words].sort(() => 0.5 - Math.random());
             currentPool = shuffled.slice(0, Math.min(10, shuffled.length));
             
             currentIndex = 0;
             correctCount = 0;
 
-            sectionsView.classList.add('hidden');
+            modeSelectView.classList.add('hidden');
             quizView.classList.remove('hidden');
-            scoreView.classList.add('hidden');
 
             lessonTitleElem.innerText = activeSection.sectionLabel;
-            renderCard();
+            renderQuizCard();
         }
 
-        function renderCard() {
+        function renderQuizCard() {
             const currentCard = currentPool[currentIndex];
             isFirstAttempt = true;
 
-            progressBar.style.width = `${(currentIndex / currentPool.length) * 100}%`;
-            scoreCountElem.innerText = correctCount;
+            quizProgressBar.style.width = `${(currentIndex / currentPool.length) * 100}%`;
+            quizScoreCount.innerText = correctCount;
 
             promptElem.innerText = currentCard.pl;
             hintText.innerText = "Powiedz po angielsku";
@@ -672,7 +3266,7 @@
             if (ratio >= 0.70) {
                 if (isFirstAttempt) {
                     correctCount++;
-                    scoreCountElem.innerText = correctCount;
+                    quizScoreCount.innerText = correctCount;
                 }
                 
                 playCorrectSound();
@@ -683,7 +3277,7 @@
                 setTimeout(() => {
                     currentIndex++;
                     if (currentIndex < currentPool.length) {
-                        renderCard();
+                        renderQuizCard();
                     } else {
                         finishSession();
                     }
@@ -704,11 +3298,12 @@
             }
         }
 
+        // Podsumowanie
         function finishSession() {
-            progressBar.style.width = `100%`;
             quizView.classList.add('hidden');
             scoreView.classList.remove('hidden');
 
+            scoreSubtitle.innerText = "Wynik poprawnej wymowy:";
             const percentage = Math.round((correctCount / currentPool.length) * 100);
             scorePercentElem.innerText = `${percentage}%`;
             scoreDetailsElem.innerText = `Poprawne odpowiedzi za pierwszym razem: ${correctCount} z ${currentPool.length}`;
@@ -716,7 +3311,10 @@
             playFanfare();
         }
 
-        // Listener events
+        // Eventy
+        startLearnBtn.addEventListener('click', startLearnMode);
+        startPracticeBtn.addEventListener('click', startPracticeMode);
+
         micBtn.addEventListener('click', () => {
             if (recognition) recognition.start();
         });
@@ -724,16 +3322,15 @@
         skipBtn.addEventListener('click', () => {
             currentIndex++;
             if (currentIndex < currentPool.length) {
-                renderCard();
+                renderQuizCard();
             } else {
                 finishSession();
             }
         });
 
-        exitBtn.addEventListener('click', renderSectionsScreen);
         restartBtn.addEventListener('click', renderSectionsScreen);
 
-        // Start
+        // Start aplikacji
         renderSectionsScreen();
     </script>
 </body>
