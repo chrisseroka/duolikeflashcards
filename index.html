@@ -89,11 +89,23 @@
             color: #3c3c3c;
         }
 
-        .section-count {
+        .section-stats-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 6px;
             font-size: 13px;
             font-weight: 700;
             color: #afafaf;
-            margin-top: 4px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-item strong {
+            color: #58cc02;
         }
 
         /* Ekran wyboru trybu */
@@ -419,7 +431,7 @@
         .feedback-message.incorrect { color: #ff4b4b; }
         .feedback-message.listening { color: #ff9600; }
 
-        /* Widok podsumowania */
+        /* Widok podsumowania wygranej */
         .score-card {
             text-align: center;
             display: flex;
@@ -427,13 +439,21 @@
             align-items: center;
             justify-content: center;
             height: 100%;
+            width: 100%;
+        }
+
+        .win-animation {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            margin-bottom: 10px;
         }
 
         .score-percent {
-            font-size: 64px;
+            font-size: 56px;
             font-weight: 800;
             color: #58cc02;
-            margin: 20px 0;
+            margin: 10px 0;
         }
 
         .restart-btn {
@@ -549,13 +569,18 @@
         </div>
     </div>
 
-    <!-- 5. Ekran podsumowania -->
+    <!-- 5. Ekran podsumowania wygranej -->
     <div class="container hidden" id="score-view">
         <div class="score-card">
-            <h1 style="font-size: 32px; font-weight: 800; color: #3c3c3c;">Gratulacje!</h1>
-            <p style="color: #777; font-weight: 700;" id="score-subtitle">Lekcja ukończona</p>
+            <!-- Animacja wygranej w formacie WebP -->
+            <img src="./win.webp" alt="You Won!" class="win-animation hidden" id="win-img">
+            
+            <h1 style="font-size: 30px; font-weight: 800; color: #3c3c3c; margin: 10px 0 5px 0;">Gratulacje!</h1>
+            <p style="color: #777; font-weight: 700; margin: 0;" id="score-subtitle">Wynik poprawnej wymowy:</p>
+            
             <div class="score-percent" id="score-percent">100%</div>
-            <p id="score-details" style="color: #777; font-weight: 700; margin-bottom: 40px;"></p>
+            <p id="score-details" style="color: #777; font-weight: 700; margin-bottom: 30px;"></p>
+            
             <button class="restart-btn" id="restart-btn">Wróć do wyboru lekcji</button>
         </div>
     </div>
@@ -2964,7 +2989,25 @@
   }
         ];
 
-        // Synteza mowy z odszukiwaniem angielskiego głosu
+        // Zarządzanie statystykami w localStorage
+        function getSectionStats(sectionId) {
+            const data = localStorage.getItem(`stats_${sectionId}`);
+            if (data) {
+                return JSON.parse(data);
+            }
+            return { gamesPlayed: 0, maxScore: 0 };
+        }
+
+        function recordCompletedGame(sectionId, scorePercent) {
+            const stats = getSectionStats(sectionId);
+            stats.gamesPlayed += 1;
+            if (scorePercent > stats.maxScore) {
+                stats.maxScore = scorePercent;
+            }
+            localStorage.setItem(`stats_${sectionId}`, JSON.stringify(stats));
+        }
+
+        // Synteza mowy
         function speakEnglish(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -2972,7 +3015,6 @@
                 utterance.lang = 'en-US';
                 utterance.rate = 0.85;
 
-                // Wybieranie natywnego głosu angielskiego
                 const voices = window.speechSynthesis.getVoices();
                 const englishVoice = voices.find(v => v.lang.startsWith('en') || v.lang.includes('en-US') || v.lang.includes('en-GB'));
                 if (englishVoice) {
@@ -2983,14 +3025,13 @@
             }
         }
 
-        // Wczytywanie głosów w tle (dla mobilnego Chrome / Safari)
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = () => {
                 window.speechSynthesis.getVoices();
             };
         }
 
-        // Efekty dźwiękowe
+        // Dźwięki Audio
         function playCorrectSound() {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const notes = [880, 1108.73, 1318.51];
@@ -3040,7 +3081,7 @@
             });
         }
 
-        // Levenshtein Distance
+        // Algorytm Levenshteina
         function getSimilarityRatio(str1, str2) {
             const s1 = str1.toLowerCase().replace(/[^a-z0-9]/g, '');
             const s2 = str2.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -3067,7 +3108,7 @@
             return (maxLength - distance) / maxLength;
         }
 
-        // Zmienne stanu
+        // Stan aplikacji
         let activeSectionIndex = 0;
         let activeSection = null;
         let revealedCardsCount = 0;
@@ -3104,12 +3145,13 @@
         const micBtn = document.getElementById('mic-btn');
         const skipBtn = document.getElementById('skip-btn');
 
+        const winImg = document.getElementById('win-img');
         const scorePercentElem = document.getElementById('score-percent');
         const scoreDetailsElem = document.getElementById('score-details');
         const scoreSubtitle = document.getElementById('score-subtitle');
         const restartBtn = document.getElementById('restart-btn');
 
-        // Rozpoznawanie mowy
+        // Speech Recognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
 
@@ -3150,12 +3192,16 @@
 
             sectionsList.innerHTML = '';
             sectionsData.forEach((sec, index) => {
+                const stats = getSectionStats(sec.id);
                 const btn = document.createElement('button');
                 btn.className = 'section-card';
                 btn.innerHTML = `
                     <div class="section-badge">${sec.sectionLabel}</div>
                     <div class="section-title">${sec.sectionDescription || 'Słówka i zwroty'}</div>
-                    <div class="section-count">${sec.words.length} słówek w zestawie</div>
+                    <div class="section-stats-row">
+                        <div class="stat-item">🎮 Rozegrane: <strong>${stats.gamesPlayed}</strong></div>
+                        <div class="stat-item">🏆 Max wynik: <strong>${stats.maxScore}%</strong></div>
+                    </div>
                 `;
                 btn.addEventListener('click', () => openModeSelect(index));
                 sectionsList.appendChild(btn);
@@ -3190,12 +3236,10 @@
                 const row = document.createElement('div');
                 row.className = 'word-row';
 
-                // Kolumna PL
                 const plCard = document.createElement('div');
                 plCard.className = 'word-card pl-card';
                 plCard.innerText = wordObj.pl;
 
-                // Kolumna EN (zakryta)
                 const enCard = document.createElement('div');
                 enCard.className = 'word-card en-card-hidden';
                 enCard.innerText = '🔒';
@@ -3205,15 +3249,11 @@
                         enCard.className = 'word-card en-card-revealed';
                         enCard.innerText = wordObj.en;
                         
-                        // ZMIANA 1: Brak dźwięku CorrectSound
-                        // ZMIANA 2: Odczytywanie natywnym angielskim głosem
                         speakEnglish(wordObj.en);
 
                         revealedCardsCount++;
                         learnProgressBar.style.width = `${(revealedCardsCount / totalWords) * 100}%`;
                         learnScoreCount.innerText = `${revealedCardsCount}/${totalWords}`;
-
-                        // ZMIANA 3: Brak automatycznego zamykania ekranu po odsłonięciu wszystkich kart
                     } else {
                         speakEnglish(wordObj.en);
                     }
@@ -3298,15 +3338,28 @@
             }
         }
 
-        // Podsumowanie
+        // Podsumowanie wygranej
         function finishSession() {
             quizView.classList.add('hidden');
             scoreView.classList.remove('hidden');
 
-            scoreSubtitle.innerText = "Wynik poprawnej wymowy:";
             const percentage = Math.round((correctCount / currentPool.length) * 100);
+            
+            // Zapisz ukończoną grę i wynik w statystykach sekcji
+            recordCompletedGame(activeSection.id, percentage);
+
+            scoreSubtitle.innerText = "Wynik poprawnej wymowy:";
             scorePercentElem.innerText = `${percentage}%`;
             scoreDetailsElem.innerText = `Poprawne odpowiedzi za pierwszym razem: ${correctCount} z ${currentPool.length}`;
+
+            // Pokaż animację win.webp jeśli wynik >= 80%
+            if (percentage >= 80) {
+                winImg.classList.remove('hidden');
+                // Podmień src, aby GIF/WebP odtworzył się od początku
+                winImg.src = `./win.webp`;
+            } else {
+                winImg.classList.add('hidden');
+            }
 
             playFanfare();
         }
